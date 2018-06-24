@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    tools:context=".LoginMainActivity">
+
+    <include layout="@layout/tool_bar_layout" android:id="@id/main_tool_bar"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="490dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical"
+        android:weightSum="10"
+        android:padding="20dp"
+        android:layout_marginTop="60dp">
+
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="match_parent"
+            android:layout_height="126dp"
+            android:layout_weight="5"
+            app:srcCompat="@drawable/header_2" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/rEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:text="nguyenxuankiet262@gmail.com"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            app:met_floatingLabel="highlight"
+            app:met_singleLineEllipsis="true" />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/rUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Họ và tên"
+            app:met_maxCharacters="11"
+            android:inputType="textPersonName"
+            android:text="Kiệt Nguyễn"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textSize="15sp"
+
+            app:met_floatingLabel="highlight"
+            app:met_singleLineEllipsis="true" />
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/rPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:text="haha"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            app:met_floatingLabel="highlight"
+            app:met_maxCharacters="11"
+            app:met_singleLineEllipsis="true" />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/rSecondPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:text="haha"
+            android:textColor="@color/colorBlack"
+            android:textColorHint="@color/colorPrimaryDark"
+            android:textSize="15sp"
+            app:met_floatingLabel="highlight"
+            app:met_maxCharacters="11"
+            app:met_singleLineEllipsis="true" />
+
+        <info.hoang8f.widget.FButton
+            android:id="@+id/rRegister_Btn"
+            android:text="Đăng kí"
+            android:textColor="@color/colorWhite"
+            android:shadowColor="@color/colorBlack"
+            app:fButtonColor="@color/colorPrimaryDark"
+            app:shadowColor="@color/colorBlack"
+            app:shadowEnabled="true"
+            app:shadowHeight="5dp"
+            app:cornerRadius="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

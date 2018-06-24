@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:background="#ffffff"
+    tools:context=".LoginActivity">
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        app:srcCompat="@drawable/header" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_welcome"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="25dp"
+            android:typeface="serif" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Milk Tea &amp; Coffee"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="15dp"
+            android:typeface="serif" />
+
+    </LinearLayout>
+
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/login_Btn"
+        android:text="Bạn đã có tài khoản?"
+        android:textColor="@color/colorWhite"
+        android:shadowColor="@color/colorBlack"
+        app:fButtonColor="@color/colorPrimaryDark"
+        app:shadowColor="@color/colorBlack"
+        app:shadowEnabled="true"
+        app:shadowHeight="5dp"
+        app:cornerRadius="10dp"
+
+        android:layout_marginTop="30dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
+        />
+
+    <info.hoang8f.widget.FButton
+        android:id="@+id/regis_Btn"
+        android:text="Bạn chưa có tài khoản?"
+        android:textColor="@color/colorWhite"
+        android:shadowColor="@color/colorBlack"
+        app:fButtonColor="@color/colorCancel"
+        app:shadowColor="@color/colorBlack"
+        app:shadowEnabled="true"
+        app:shadowHeight="5dp"
+        app:cornerRadius="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp" />
+
+</LinearLayout>

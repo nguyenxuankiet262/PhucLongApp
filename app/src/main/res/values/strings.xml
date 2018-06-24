@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_continue">Continue</string>
+    <string name="app_name">PhucLongApp</string>
+    <string name="app_welcome">Welcome to Phúc Long</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="map_api_key">AIzaSyCwL7g9mCJodrBQUyojiZapTobF4q7Y3yY</string>
+    <string name="facebook_app_id">2081103335437366</string>
+    <string name="fb_login_protocol_scheme">fb2081103335437366</string>
+</resources>

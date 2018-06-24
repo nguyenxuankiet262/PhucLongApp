@@ -1,0 +1,53 @@
+package com.phonglongapp.xk.phuclongapp.ViewHolder;
+
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.phonglongapp.xk.phuclongapp.Interface.ItemClickListener;
+import com.phonglongapp.xk.phuclongapp.Interface.ItemLongClickListener;
+import com.phonglongapp.xk.phuclongapp.R;
+
+public class CartViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
+    public ImageView image_cart;
+    public TextView status_hot, status_cold, name_cart, price_cart;
+    public ElegantNumberButton quanity_cart;
+    ItemClickListener itemClickListener;
+    ItemLongClickListener itemLongClickListener;
+    public RelativeLayout view_background;
+    public LinearLayout view_foreground;
+
+    public CartViewHolder(View itemView) {
+        super(itemView);
+
+        view_background = itemView.findViewById(R.id.view_background);
+        view_foreground = itemView.findViewById(R.id.view_foreground);
+        image_cart = itemView.findViewById(R.id.image_cart);
+        status_hot = itemView.findViewById(R.id.status_hot_cart);
+        status_cold = itemView.findViewById(R.id.status_cold_cart);
+        name_cart = itemView.findViewById(R.id.name_cart);
+        price_cart = itemView.findViewById(R.id.price_cart);
+        quanity_cart = itemView.findViewById(R.id.quanity_cart);
+        itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
+    }
+    public void setItemClickListener(ItemClickListener itemClickListener, ItemLongClickListener itemLongClickListener)
+    {
+        this.itemClickListener = itemClickListener;
+        this.itemLongClickListener = itemLongClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        itemClickListener.onClick(v,getAdapterPosition());
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return itemLongClickListener.onLongClick(v,getAdapterPosition());
+    }
+}
