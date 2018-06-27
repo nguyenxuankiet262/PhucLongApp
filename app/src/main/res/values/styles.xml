@@ -31,7 +31,9 @@
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">15sp</item>
     </style>
-
+    <style name="AppbarUser" parent="@android:style/TextAppearance.Material.Title">
+        <item name="android:textSize">0sp</item>
+    </style>
     <style name="RatingDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="android:background">@color/colorWhite</item>
         <item name="android:buttonBarPositiveButtonStyle">@style/RatingDialogButton</item>

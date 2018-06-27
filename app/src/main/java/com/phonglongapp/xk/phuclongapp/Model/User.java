@@ -6,19 +6,29 @@ public class User {
     String address;
     String phone;
     String image;
+    String password;
     String email;
 
     public User(){
 
     }
 
-    public User(String id, String name, String address, String phone, String image, String email) {
+    public User(String id, String name, String address, String phone, String image, String email, String password) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.image = image;
         this.email = email;
+        this.password = password;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public String getId() {

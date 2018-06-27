@@ -128,6 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
                     userMap.put("phone","empty");
                     userMap.put("image","empty");
                     userMap.put("email",email);
+                    userMap.put("password",firstpass);
                     user.setValue(userMap);
 
                     Toast.makeText(RegisterActivity.this,"Đăng kí thành công",Toast.LENGTH_LONG).show();

@@ -19,7 +19,7 @@
             android:id="@+id/collapsing"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:fitsSystemWindows="true"
+            app:title="Food Name"
             app:contentScrim="@color/colorPrimary"
             app:expandedTitleTextAppearance="@color/colorWhitetoTransparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
@@ -27,7 +27,7 @@
             >
 
             <ImageView
-                android:id="@+id/image_drink_menu"
+                android:id="@+id/image_avt_user"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@null"
@@ -36,13 +36,13 @@
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
-                app:navigationIcon="@drawable/arrow_left_white_24dp"
+                app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
                 android:id="@+id/tool_bar_drink_menu"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:title="Food Name"></android.support.v7.widget.Toolbar>
+                ></android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
