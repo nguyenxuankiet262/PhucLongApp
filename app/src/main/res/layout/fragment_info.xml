@@ -424,7 +424,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:hint="Nhập số điện thoại"
-                        android:inputType="numberPassword"
+                        android:inputType="number"
                         android:textSize="13sp"
                         app:met_floatingLabel="highlight"
                         app:met_singleLineEllipsis="true" />

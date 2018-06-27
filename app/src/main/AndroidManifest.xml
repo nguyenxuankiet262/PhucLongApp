@@ -48,6 +48,7 @@
             android:parentActivityName=".LoginActivity" />
         <activity android:name=".CartActivity" />
         <activity android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/MyTheme.TranslucentNavigation"/>
         <activity android:name=".SearchActivity" />
         <!--

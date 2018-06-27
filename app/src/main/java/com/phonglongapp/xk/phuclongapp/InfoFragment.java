@@ -47,6 +47,9 @@ import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import info.hoang8f.widget.FButton;
 
@@ -276,8 +279,42 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
             }
         });
         //Check Details Click
-        
-
+        accept_btn_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String nameuser = name_user.getText().toString();
+                final String address = address_user.getText().toString();
+                final String phone = phone_user.getText().toString();
+                if (!TextUtils.isEmpty(nameuser) && !TextUtils.isEmpty(address) && !TextUtils.isEmpty(phone)) {
+                    progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setTitle("Uploading detail information...");
+                    progressDialog.setMessage("Please wait for a minute!");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
+                    user.child(Common.CurrentUser.getId()).child("name").setValue(nameuser).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                progressDialog.dismiss();
+                                Common.CurrentUser.setName(nameuser);
+                                Common.CurrentUser.setAddress(address);
+                                Common.CurrentUser.setPhone(phone);
+                                user.child(Common.CurrentUser.getId()).child("address").setValue(address);
+                                user.child(Common.CurrentUser.getId()).child("phone").setValue(phone);
+                                Toast.makeText(getActivity(), "Cập nhật thành công!", Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                progressDialog.dismiss();
+                                Toast.makeText(getActivity(),"Lỗi cập nhật!",Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                else {
+                    Toast.makeText(getActivity(),"Nhập đầy đủ thông tin!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
         //Check Noty click
     }
 
