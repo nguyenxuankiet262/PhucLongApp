@@ -11,8 +11,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.phonglongapp.xk.phuclongapp.Adapter.CartAdapter;
+import com.phonglongapp.xk.phuclongapp.Model.Order;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import com.phonglongapp.xk.phuclongapp.Utils.RecyclerItemTouchHelper;
@@ -33,7 +37,11 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
     FButton placeButton;
     TextView total;
     CartAdapter cartAdapter;
-    List<Cart> local_listcart = new ArrayList<Cart>();
+    List<Cart> local_listcart = new ArrayList<>();
+
+    //Firebase
+    FirebaseDatabase database;
+    DatabaseReference orderDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,9 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         setContentView(R.layout.activity_cart);
 
         relativeLayout = findViewById(R.id.cart_layout);
+
+        database = FirebaseDatabase.getInstance();
+        orderDatabase = database.getReference("Order");
 
         cartList = findViewById(R.id.cart_list);
         placeButton = findViewById(R.id.order_button);
@@ -53,6 +64,28 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(cartList);
 
         loadCartItem();
+
+        placeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Order order = new Order();
+                order.setName(Common.CurrentUser.getName());
+                order.setAddress(Common.CurrentUser.getAddress());
+                order.setPhone(Common.CurrentUser.getPhone());
+                order.setPrice(total.getText().toString());
+                order.setNote("Nothing");
+                order.setStatus("Ordered");
+                order.setCartList(local_listcart);
+
+                orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order);
+
+                Common.cartRepository.emptyCart();
+
+                Toast.makeText(CartActivity.this,"Đặt món thành công! Xin cám ơn quý khách",Toast.LENGTH_LONG).show();
+
+                total.setText("0 VNĐ");
+            }
+        });
     }
 
     @SuppressLint("CheckResult")
