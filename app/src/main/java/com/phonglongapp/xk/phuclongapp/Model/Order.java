@@ -11,20 +11,30 @@ public class Order {
     private String price;
     private String status;
     private String note;
+    private String payment;
     List<Cart> cartList;
 
     public Order(){
 
     }
 
-    public Order(String name, String address, String phone, String price, String status, String note, List<Cart> cartList) {
+    public Order(String name, String address, String phone, String price, String status, String note, String payment, List<Cart> cartList) {
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.price = price;
         this.status = status;
         this.note = note;
+        this.payment = payment;
         this.cartList = cartList;
+    }
+
+    public String getPayment() {
+        return payment;
+    }
+
+    public void setPayment(String payment) {
+        this.payment = payment;
     }
 
     public String getName() {

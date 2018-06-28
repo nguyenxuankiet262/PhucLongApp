@@ -1,26 +1,43 @@
 package com.phonglongapp.xk.phuclongapp;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.kofigyan.stateprogressbar.StateProgressBar;
+import com.kofigyan.stateprogressbar.components.StateItem;
+import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
 import com.phonglongapp.xk.phuclongapp.Adapter.CartAdapter;
+import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Model.Order;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
+import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Utils.RecyclerItemTouchHelper;
 import com.phonglongapp.xk.phuclongapp.Interface.RecyclerItemTouchHelperListener;
+import com.rengwuxian.materialedittext.MaterialEditText;
+import com.stepstone.apprating.C;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,12 +49,17 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener{
 
-    RelativeLayout relativeLayout;
+    EditText comment_text;
+    RelativeLayout relativeLayout,existLayout,emptyLayout;
     RecyclerView cartList;
     FButton placeButton;
     TextView total;
     CartAdapter cartAdapter;
     List<Cart> local_listcart = new ArrayList<>();
+    FrameLayout details,payment,comment;
+    FButton next_details,next_payment,back_payment,next_comment,back_comment;
+    MaterialEditText name_detais, address_details,phone_details;
+    RadioGroup radioGroup;
 
     //Firebase
     FirebaseDatabase database;
@@ -49,6 +71,8 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         setContentView(R.layout.activity_cart);
 
         relativeLayout = findViewById(R.id.cart_layout);
+        existLayout = findViewById(R.id.cart_exist_layout);
+        emptyLayout = findViewById(R.id.empty_cart_layout);
 
         database = FirebaseDatabase.getInstance();
         orderDatabase = database.getReference("Order");
@@ -68,22 +92,145 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         placeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Order order = new Order();
-                order.setName(Common.CurrentUser.getName());
-                order.setAddress(Common.CurrentUser.getAddress());
-                order.setPhone(Common.CurrentUser.getPhone());
-                order.setPrice(total.getText().toString());
-                order.setNote("Nothing");
-                order.setStatus("Ordered");
-                order.setCartList(local_listcart);
+                if(Common.cartRepository.countCartItem() != 0) {
+                    final Order order = new Order();
+                    String[] descriptionData = {"Details", "Payment","Comment"};
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
+                    final View itemView = LayoutInflater.from(CartActivity.this).inflate(R.layout.dialog_submit_place_order,null);
+                    final StateProgressBar stateProgressBar = itemView.findViewById(R.id.state_process_bar);
+                    stateProgressBar.setStateDescriptionData(descriptionData);
+                    details = itemView.findViewById(R.id.dialog_details);
+                    payment = itemView.findViewById(R.id.dialog_payment);
+                    comment = itemView.findViewById(R.id.dialog_comment);
+                    payment.setVisibility(View.GONE);
+                    comment.setVisibility(View.GONE);
 
-                orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order);
+                    //Ánh xạ
+                    name_detais = itemView.findViewById(R.id.name_dialog);
+                    address_details = itemView.findViewById(R.id.address_dialog);
+                    phone_details = itemView.findViewById(R.id.phone_dialog);
+                    radioGroup = itemView.findViewById(R.id.radio_group);
+                    comment_text = itemView.findViewById(R.id.comment_text);
 
-                Common.cartRepository.emptyCart();
+                    next_details = details.findViewById(R.id.dialog_next_details_btn);
+                    back_payment = payment.findViewById(R.id.dialog_back_payment_btn);
+                    next_payment = payment.findViewById(R.id.dialog_next_payment_btn);
+                    back_comment = comment.findViewById(R.id.dialog_back_comment_btn);
+                    next_comment = comment.findViewById(R.id.dialog_next_comment_btn);
 
-                Toast.makeText(CartActivity.this,"Đặt món thành công! Xin cám ơn quý khách",Toast.LENGTH_LONG).show();
+                    //Init Details
 
-                total.setText("0 VNĐ");
+                    name_detais.setText(Common.CurrentUser.getName());;
+
+                    if(!Common.CurrentUser.getAddress().equals("empty")){
+                        address_details.setText(Common.CurrentUser.getAddress());
+                    }
+                    if(!Common.CurrentUser.getPhone().equals("empty")){
+                        phone_details.setText(Common.CurrentUser.getPhone());
+                    }
+
+                    //Check Button onClick
+
+                    next_details.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            order.setName(name_detais.getText().toString());
+                            order.setAddress(address_details.getText().toString());
+                            order.setPhone(phone_details.getText().toString());
+                            details.setVisibility(View.GONE);
+                            payment.setVisibility(View.VISIBLE);
+                            stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+                        }
+                    });
+
+                    back_payment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            payment.setVisibility(View.GONE);
+                            details.setVisibility(View.VISIBLE);
+                            stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.ONE);
+                        }
+                    });
+                    next_payment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int radioID = radioGroup.getCheckedRadioButtonId();
+                            switch (radioID){
+                                case R.id.radio_credit:
+                                    order.setPayment("Credit card");
+                                    break;
+                                case R.id.radio_paypal:
+                                    order.setPayment("Paypal card");
+                                    break;
+                                case R.id.radi_cash_on_delivery:
+                                    order.setPayment("Cash on delivery");
+                                    break;
+                            }
+                            payment.setVisibility(View.GONE);
+                            comment.setVisibility(View.VISIBLE);
+                            stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.THREE);
+                        }
+                    });
+
+                    back_comment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            comment.setVisibility(View.GONE);
+                            payment.setVisibility(View.VISIBLE);
+                            stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+                        }
+                    });
+
+
+                    builder.setView(itemView);
+                    final AlertDialog alertDialog = builder.show();
+
+                    next_comment.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            order.setPrice(total.getText().toString());
+                            order.setNote(comment_text.getText().toString());
+                            order.setStatus("Ordered");
+                            order.setCartList(local_listcart);
+
+                            stateProgressBar.setAllStatesCompleted(true);
+
+                            final ProgressDialog progressDialog;
+
+                            progressDialog = new ProgressDialog(CartActivity.this);
+                            progressDialog.setTitle("Ordering...");
+                            progressDialog.setMessage("Please wait for a minute!");
+                            progressDialog.setCanceledOnTouchOutside(false);
+                            progressDialog.show();
+
+                            orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        alertDialog.dismiss();
+
+                                        progressDialog.dismiss();
+
+                                        Common.cartRepository.emptyCart();
+
+                                        Toast.makeText(CartActivity.this, "Đặt món thành công! Xin cám ơn quý khách", Toast.LENGTH_LONG).show();
+
+                                        total.setText("0 VNĐ");
+                                    }
+                                }
+                            });
+
+
+                        }
+                    });
+
+                    //Set Value to Firebase Database
+
+
+                }
+                else {
+
+                }
             }
         });
     }
@@ -96,7 +243,14 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                 .subscribe(new Consumer<List<Cart>>() {
                     @Override
                     public void accept(List<Cart> carts) throws Exception {
-                        displayCart(carts);
+                        if(Common.cartRepository.countCartItem() == 0) {
+                            emptyLayout.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            existLayout.setVisibility(View.VISIBLE);
+                            emptyLayout.setVisibility(View.GONE);
+                            displayCart(carts);
+                        }
                     }
                 });
     }
@@ -136,6 +290,9 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
+            if(Common.cartRepository.countCartItem() == 0){
+                total.setText("0 VNĐ");
+            }
         }
     }
 }

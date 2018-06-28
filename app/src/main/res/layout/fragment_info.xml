@@ -91,7 +91,7 @@
                         android:layout_margin="16dp"
                         android:drawableLeft="@drawable/ic_credit_card_black_22dp"
                         android:drawablePadding="12dp"
-                        android:text="Add credit or debit card"
+                        android:text="Add credit"
                         android:textColor="@color/colorBlack"
                         android:textSize="15sp" />
 

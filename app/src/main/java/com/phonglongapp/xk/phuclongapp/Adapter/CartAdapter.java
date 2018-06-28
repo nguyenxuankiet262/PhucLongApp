@@ -20,6 +20,7 @@ import com.phonglongapp.xk.phuclongapp.Interface.ItemLongClickListener;
 import com.phonglongapp.xk.phuclongapp.R;
 import com.phonglongapp.xk.phuclongapp.ViewHolder.CartViewHolder;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.C;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -48,10 +49,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 
         //Khởi tạo total
         int sum = 0;
-        for(int i = 0;i<cartList.size();i++){
-            sum+= cartList.get(i).cPrice;
+        for (int i = 0; i < cartList.size(); i++) {
+            sum += cartList.get(i).cPrice;
         }
         total.setText(NumberFormat.getNumberInstance(Locale.US).format(sum) + " VNĐ");
+
         //Khởi tạo Image_cold của Cart
         if(cartList.get(position).cStatus.equals("cold")) {
             Picasso.with(context).load(cartList.get(position).cImageCold).into(holder.image_cart);

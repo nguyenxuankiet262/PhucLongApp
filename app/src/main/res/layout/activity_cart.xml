@@ -8,15 +8,24 @@
     android:id="@+id/cart_layout"
     android:background="@color/colorWhite">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/cart_list"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@id/layout_cart"
-        android:scrollbars="vertical"
-        >
+        android:id="@+id/cart_exist_layout">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/cart_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
 
-    </android.support.v7.widget.RecyclerView>
+            android:scrollbars="vertical"
+            >
+
+        </android.support.v7.widget.RecyclerView>
+    </RelativeLayout>
+
+    <include layout="@layout/empty_cart_layout"
+        android:id="@+id/empty_cart_layout"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/layout_cart"
