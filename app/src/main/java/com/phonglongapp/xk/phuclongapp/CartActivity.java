@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -134,12 +135,17 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     next_details.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            order.setName(name_detais.getText().toString());
-                            order.setAddress(address_details.getText().toString());
-                            order.setPhone(phone_details.getText().toString());
-                            details.setVisibility(View.GONE);
-                            payment.setVisibility(View.VISIBLE);
-                            stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+                            if(!TextUtils.isEmpty(name_detais.getText().toString()) && !TextUtils.isEmpty(address_details.getText().toString()) && !TextUtils.isEmpty(phone_details.getText().toString())) {
+                                order.setName(name_detais.getText().toString());
+                                order.setAddress(address_details.getText().toString());
+                                order.setPhone(phone_details.getText().toString());
+                                details.setVisibility(View.GONE);
+                                payment.setVisibility(View.VISIBLE);
+                                stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
+                            }
+                            else {
+                                Toast.makeText(CartActivity.this,"Vui lòng nhập đầy đủ thông tin!",Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 

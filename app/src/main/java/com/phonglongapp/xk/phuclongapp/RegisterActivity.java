@@ -124,8 +124,8 @@ public class RegisterActivity extends AppCompatActivity {
                     user = database.getReference().child("User").child(uid);
                     HashMap<String,String> userMap = new HashMap<>();
                     userMap.put("name",username);
-                    userMap.put("address","empty");
-                    userMap.put("phone","empty");
+                    userMap.put("address","");
+                    userMap.put("phone","");
                     userMap.put("image","empty");
                     userMap.put("email",email);
                     userMap.put("password",firstpass);

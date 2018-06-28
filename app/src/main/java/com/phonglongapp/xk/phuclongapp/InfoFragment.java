@@ -343,10 +343,10 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         email_user.setText(Common.CurrentUser.getEmail());
         name_user.setText(Common.CurrentUser.getName());
         pass_old.setText(Common.CurrentUser.getPassword());
-        if (!Common.CurrentUser.getAddress().equals("empty")) {
+        if (!TextUtils.isEmpty(Common.CurrentUser.getAddress())) {
             address_user.setText(Common.CurrentUser.getAddress());
         }
-        if (!Common.CurrentUser.getPhone().equals("empty")) {
+        if (!TextUtils.isEmpty(Common.CurrentUser.getPhone())) {
             phone_user.setText(Common.CurrentUser.getPhone());
         }
 
