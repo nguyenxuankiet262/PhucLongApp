@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,9 +40,11 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nex3z.notificationbadge.NotificationBadge;
 import com.phonglongapp.xk.phuclongapp.Adapter.CategoryAdapter;
+import com.phonglongapp.xk.phuclongapp.Model.Order;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.DataSource.CartRepository;
 import com.phonglongapp.xk.phuclongapp.Database.DataSource.FavoriteRepository;
@@ -50,24 +53,25 @@ import com.phonglongapp.xk.phuclongapp.Database.Local.DrinkRoomDatabase;
 import com.phonglongapp.xk.phuclongapp.Database.Local.FavoriteDateSource;
 import com.phonglongapp.xk.phuclongapp.Model.Banner;
 import com.phonglongapp.xk.phuclongapp.Model.Category;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainFragment extends Fragment{
+public class MainFragment extends Fragment {
 
     private Toolbar toolbar;
     private RecyclerView list_menu;
-    ImageView cartBtn,user_avt;
-    TextView user_name,user_email,user_info,user_name_drink,user_quanity_drink,user_time_drink,user_all_drink,user_log_out;
+    ImageView cartBtn, user_avt;
+    TextView user_name, user_email, user_info, user_name_drink, user_quanity_drink, user_time_drink, user_all_drink, user_log_out;
 
     //FirebaseDatabase
     FirebaseDatabase database;
-    DatabaseReference catogories,banners;
+    DatabaseReference catogories, banners, order;
 
     //Slider
-    HashMap<String,String> banner_list;
+    HashMap<String, String> banner_list;
     SliderLayout sliderLayout;
 
     //Category
@@ -84,9 +88,12 @@ public class MainFragment extends Fragment{
     RelativeLayout user_background;
     LinearLayout user_foreground;
 
-    public MainFragment(){
+    Order temp;
+
+    public MainFragment() {
 
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -107,22 +114,27 @@ public class MainFragment extends Fragment{
         database = FirebaseDatabase.getInstance();
         catogories = database.getReference("Category");
         banners = database.getReference("Banner");
+        order = database.getReference("Order");
         catogories.keepSynced(true);
+        temp = new Order();
+        temp = null;
 
         toolbar = view.findViewById(R.id.main_tool_bar);
         list_menu = view.findViewById(R.id.list_category);
-        list_menu.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL,false));
+        list_menu.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         list_menu.setHasFixedSize(true);
 
+        checkOrder();
+
         //Set adapter
-        adapter = new CategoryAdapter(getActivity(),categoryArrayList);
+        adapter = new CategoryAdapter(getActivity(), categoryArrayList);
         loadMenu();
         list_menu.setAdapter(adapter);
 
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Phúc Long");
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setLogo(R.drawable.logo_header_2);
-        toolbar.setTitleTextAppearance(getActivity(),R.style.RobotoBoldTextAppearance);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Phúc Long");
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setLogo(R.drawable.logo_header_2);
+        toolbar.setTitleTextAppearance(getActivity(), R.style.RobotoBoldTextAppearance);
 
         //Slider
         sliderLayout = view.findViewById(R.id.slider);
@@ -144,11 +156,11 @@ public class MainFragment extends Fragment{
         banners.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot post: dataSnapshot.getChildren()){
+                for (DataSnapshot post : dataSnapshot.getChildren()) {
                     Banner banner = post.getValue(Banner.class);
-                    banner_list.put(banner.getName(),banner.getImage());
+                    banner_list.put(banner.getName(), banner.getImage());
                 }
-                for(String nameBanner:banner_list.keySet()){
+                for (String nameBanner : banner_list.keySet()) {
 
                     //Create slider
                     TextSliderView textSliderView = new TextSliderView(getActivity());
@@ -212,14 +224,14 @@ public class MainFragment extends Fragment{
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_main_toolbar,menu);
+        inflater.inflate(R.menu.menu_main_toolbar, menu);
         View view = menu.findItem(R.id.icon_cart_menu).getActionView();
         badge = view.findViewById(R.id.badge);
         cartBtn = view.findViewById(R.id.cart_icon);
         cartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cartIntent = new Intent(getActivity(),CartActivity.class);
+                Intent cartIntent = new Intent(getActivity(), CartActivity.class);
                 startActivity(cartIntent);
             }
         });
@@ -227,11 +239,11 @@ public class MainFragment extends Fragment{
     }
 
     private void updateCartCount() {
-        if(badge == null) return;
+        if (badge == null) return;
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(Common.cartRepository.countCartItem() == 0)
+                if (Common.cartRepository.countCartItem() == 0)
                     badge.setVisibility(View.INVISIBLE);
                 else {
                     badge.setVisibility(View.VISIBLE);
@@ -243,7 +255,7 @@ public class MainFragment extends Fragment{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.icon_account:
                 View menuItem = getView().findViewById(R.id.icon_account);
                 showPopup(menuItem);
@@ -265,7 +277,7 @@ public class MainFragment extends Fragment{
 
     public void showPopup(View anchorView) {
         // Inflate the popup_layout.xml
-        View layout  = getActivity().getLayoutInflater().inflate(R.layout.popup_menu_layout, null);
+        View layout = getActivity().getLayoutInflater().inflate(R.layout.popup_menu_layout, null);
         final PopupWindow popup = new PopupWindow(layout,
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
@@ -291,10 +303,24 @@ public class MainFragment extends Fragment{
         user_background = layout.findViewById(R.id.user_background);
         user_foreground = layout.findViewById(R.id.user_foreground);
 
+
+
+        if(temp == null){
+            user_foreground.setVisibility(View.GONE);
+            user_background.setVisibility(View.VISIBLE);
+        }
+        else{
+            user_background.setVisibility(View.GONE);
+            user_foreground.setVisibility(View.VISIBLE);
+            user_name_drink.setText(temp.getCartList().get(0).cName);
+            user_quanity_drink.setText("Số lượng "+temp.getCartList().get(0).cQuanity+"");
+        }
+
         //Set giá trị
         //Toast.makeText(getActivity(),Common.CurrentUser.getEmail(),Toast.LENGTH_LONG).show();
-        user_background.setVisibility(View.VISIBLE);
-        user_foreground.setVisibility(View.GONE);
+        if (!Common.CurrentUser.getImage().equals("empty")) {
+            Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(user_avt);
+        }
         user_email.setText(Common.CurrentUser.getEmail());
         user_name.setText(Common.CurrentUser.getName());
 
@@ -305,7 +331,7 @@ public class MainFragment extends Fragment{
                 popup.dismiss();
                 InfoFragment infoFragment = new InfoFragment();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_fragment,infoFragment,"InfoFragment").addToBackStack(null).commit();
+                transaction.replace(R.id.main_fragment, infoFragment, "InfoFragment").addToBackStack(null).commit();
             }
         });
 
@@ -345,5 +371,34 @@ public class MainFragment extends Fragment{
         popup.showAtLocation(anchorView, Gravity.NO_GRAVITY,
                 location[0], location[1] + anchorView.getHeight());
 
+    }
+    private Order checkOrder() {
+        order.child(Common.CurrentUser.getId()).orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                temp = dataSnapshot.getValue(Order.class);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                temp = null;
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return temp;
     }
 }
