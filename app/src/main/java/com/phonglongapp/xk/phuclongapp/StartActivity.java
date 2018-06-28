@@ -80,33 +80,12 @@ public class StartActivity extends AppCompatActivity {
                                     currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                     uid = currentUser.getUid();
                                     user = database.getReference("User").child(uid);
-                                    user.addChildEventListener(new ChildEventListener() {
+                                    user.addValueEventListener(new ValueEventListener() {
                                         @Override
-                                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             User user = dataSnapshot.getValue(User.class);
                                             user.setId(dataSnapshot.getKey());
                                             Common.CurrentUser = user;
-                                            Intent intent = new Intent(StartActivity.this, MainActivity.class);;
-                                            startActivity(intent);
-                                            finish();
-                                        }
-
-                                        @Override
-                                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                                        }
-
-                                        @Override
-                                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                                            FirebaseAuth.getInstance().signOut();
-                                            Intent intent = new Intent(StartActivity.this, LoginActivity.class);
-                                            startActivity(intent);
-                                            finish();
-                                        }
-
-                                        @Override
-                                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
                                         }
 
                                         @Override
@@ -115,6 +94,9 @@ public class StartActivity extends AppCompatActivity {
                                         }
                                     });
                                     // User is signed in (getCurrentUser() will be null if not signed in)
+                                    Intent intent = new Intent(StartActivity.this, MainActivity.class);;
+                                    startActivity(intent);
+                                    finish();
                                 }
                                 else {
                                     Intent intent = new Intent(StartActivity.this, LoginActivity.class);

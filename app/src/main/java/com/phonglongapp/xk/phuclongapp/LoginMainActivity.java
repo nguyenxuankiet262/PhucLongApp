@@ -256,6 +256,9 @@ public class LoginMainActivity extends AppCompatActivity {
                             User user = dataSnapshot.getValue(User.class);
                             user.setId(dataSnapshot.getKey());
                             Common.CurrentUser = user;
+                            Intent mainIntent = new Intent(LoginMainActivity.this,MainActivity.class);
+                            startActivity(mainIntent);
+                            finish();
                         }
 
                         @Override
@@ -263,9 +266,6 @@ public class LoginMainActivity extends AppCompatActivity {
 
                         }
                     });
-                    Intent mainIntent = new Intent(LoginMainActivity.this,MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
                 }
                 else{
                     progressDialog.hide();

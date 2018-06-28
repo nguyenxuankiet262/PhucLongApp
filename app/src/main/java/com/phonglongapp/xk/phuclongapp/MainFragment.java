@@ -314,6 +314,7 @@ public class MainFragment extends Fragment {
             user_foreground.setVisibility(View.VISIBLE);
             user_name_drink.setText(temp.getCartList().get(0).cName);
             user_quanity_drink.setText("Số lượng "+temp.getCartList().get(0).cQuanity+"");
+            user_time_drink.setText(Common.getTimeAgo(Long.parseLong(temp.getId()),getActivity()));
         }
 
         //Set giá trị
@@ -380,6 +381,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 temp = dataSnapshot.getValue(Order.class);
+                temp.setId(dataSnapshot.getKey());
             }
 
             @Override

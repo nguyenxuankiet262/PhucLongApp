@@ -153,7 +153,9 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
                     Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(imageView);
                 }//set the image in dialog popup
                 //below code fullfil the requirement of xml layout file for dialoge popup
-
+                else {
+                    imageView.setImageResource(R.drawable.avt);
+                }
                 builder.addContentView(imageView, new RelativeLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT));
