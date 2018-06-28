@@ -5,6 +5,7 @@ import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import java.util.List;
 
 public class Order {
+    private String id;
     private String name;
     private String address;
     private String phone;
@@ -18,7 +19,8 @@ public class Order {
 
     }
 
-    public Order(String name, String address, String phone, String price, String status, String note, String payment, List<Cart> cartList) {
+    public Order(String id, String name, String address, String phone, String price, String status, String note, String payment, List<Cart> cartList) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.phone = phone;
@@ -27,6 +29,14 @@ public class Order {
         this.note = note;
         this.payment = payment;
         this.cartList = cartList;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPayment() {

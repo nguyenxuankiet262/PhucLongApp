@@ -361,6 +361,9 @@ public class MainFragment extends Fragment {
             }
         });
 
+        //View all drink
+
+
 
         int location[] = new int[2];
 
