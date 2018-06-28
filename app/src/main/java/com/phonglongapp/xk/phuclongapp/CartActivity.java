@@ -209,7 +209,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                             progressDialog.setCanceledOnTouchOutside(false);
                             progressDialog.show();
 
-                            orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            orderDatabase.child(Common.CurrentUser.getId()).child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
@@ -229,10 +229,6 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                         }
                     });
-
-                    //Set Value to Firebase Database
-
-
                 }
                 else {
 
