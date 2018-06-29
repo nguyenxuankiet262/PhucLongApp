@@ -28,11 +28,11 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="height" value="22" />
-                            <entry key="outputName" value="ic_attach_money_black_22dp" />
+                            <entry key="height" value="15" />
+                            <entry key="outputName" value="ic_attach_money_black_15dp" />
                             <entry key="overrideSize" value="true" />
                             <entry key="sourceFile" value="C:\Users\ADMIN" />
-                            <entry key="width" value="22" />
+                            <entry key="width" value="15" />
                           </map>
                         </option>
                       </PersistentState>

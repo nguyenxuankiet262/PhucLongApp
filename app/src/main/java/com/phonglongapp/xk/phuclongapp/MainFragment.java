@@ -44,6 +44,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.nex3z.notificationbadge.NotificationBadge;
 import com.phonglongapp.xk.phuclongapp.Adapter.CategoryAdapter;
+import com.phonglongapp.xk.phuclongapp.Adapter.OrderAdapter;
 import com.phonglongapp.xk.phuclongapp.Model.Order;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.DataSource.CartRepository;
@@ -108,7 +109,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        categoryArrayList = new ArrayList<Category>();
+        categoryArrayList = new ArrayList<>();
 
         //Init Firebase;
         database = FirebaseDatabase.getInstance();
@@ -364,7 +365,20 @@ public class MainFragment extends Fragment {
 
         //View all drink
 
+        user_all_drink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(temp == null){
 
+                }
+                else {
+                    popup.dismiss();
+                    ViewDrinkFragment viewDrinkFragment = new ViewDrinkFragment();
+                    FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.main_fragment, viewDrinkFragment, "InfoFragment").addToBackStack(null).commit();
+                }
+            }
+        });
 
         int location[] = new int[2];
 
