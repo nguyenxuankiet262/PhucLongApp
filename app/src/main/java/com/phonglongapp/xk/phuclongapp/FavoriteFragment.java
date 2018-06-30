@@ -40,14 +40,15 @@ public class FavoriteFragment extends Fragment {
     RelativeLayout emptyLayout;
     CoordinatorLayout existLayout;
 
-    public FavoriteFragment(){
+    public FavoriteFragment() {
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite, container,false);
+        return inflater.inflate(R.layout.fragment_favorite, container, false);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class FavoriteFragment extends Fragment {
         emptyLayout = view.findViewById(R.id.empty_fav_layout);
         Common.parentFavLayout = view.findViewById(R.id.myCoordinatorLayout);
         list_fav = view.findViewById(R.id.list_favorite);
-        list_fav.setLayoutManager(new GridLayoutManager(getActivity(),2));
+        list_fav.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         list_fav.setHasFixedSize(true);
         favLayout = view.findViewById(R.id.fav_layout);
         existLayout = view.findViewById(R.id.myCoordinatorLayout);
@@ -64,26 +65,20 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadFavItem() {
-        Common.favoriteRepository.getFavItems()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<List<Favorite>>() {
-                    @Override
-                    public void accept(List<Favorite> favorites) throws Exception {
-                        if(Common.favoriteRepository.countFavItem()== 0) {
-                            emptyLayout.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            existLayout.setVisibility(View.VISIBLE);
-                            emptyLayout.setVisibility(View.GONE);
-                            displayFav(favorites);
-                        }
-                    }
-                });
+        List<Favorite> favorites = Common.favoriteRepository.getFavItemsByUserID(Common.CurrentUser.getId());
+
+        if (Common.favoriteRepository.countFavItem(Common.CurrentUser.getId()) == 0) {
+            emptyLayout.setVisibility(View.VISIBLE);
+        } else {
+            existLayout.setVisibility(View.VISIBLE);
+            emptyLayout.setVisibility(View.GONE);
+            displayFav(favorites);
+        }
+
     }
 
     private void displayFav(List<Favorite> favorites) {
-        FavoriteAdapter adapter = new FavoriteAdapter(getActivity(),favorites,this);
+        FavoriteAdapter adapter = new FavoriteAdapter(getActivity(), favorites, this);
         list_fav.setAdapter(adapter);
     }
 }

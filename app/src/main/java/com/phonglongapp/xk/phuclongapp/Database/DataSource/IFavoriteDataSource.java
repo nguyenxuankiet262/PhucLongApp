@@ -11,9 +11,10 @@ import java.util.List;
 import io.reactivex.Flowable;
 
 public interface IFavoriteDataSource {
-    Flowable<List<Favorite>> getFavItems();
-    int isFavorite(int itemId);
+    List<Favorite> getFavItems();
+    List<Favorite> getFavItemsByUserID(String userID);
+    int isFavorite(int itemId, String userId);
     void insertCart(Favorite... favorites);
     void deleteFavItem(Favorite favorite);
-    int countFavItem();
+    int countFavItem(String userID);
 }

@@ -2,6 +2,7 @@ package com.phonglongapp.xk.phuclongapp.Database.ModelDB;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity(tableName = "Favorite")
@@ -9,6 +10,8 @@ public class Favorite {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public int fId;
+    @ColumnInfo(name = "idUser")
+    public String uId;
     @ColumnInfo(name = "name")
     public String fName;
     @ColumnInfo(name = "imagecold")

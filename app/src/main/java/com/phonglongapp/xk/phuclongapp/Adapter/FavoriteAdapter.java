@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ import com.phonglongapp.xk.phuclongapp.ViewHolder.FavoriteViewHolder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.stepstone.apprating.C;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -40,7 +42,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
     Context context;
     List<Favorite> favoriteList;
     ImageView image_cold, image_hot;
-    Button accept,cancel;
+    Button accept, cancel;
     ElegantNumberButton elegantNumberButton;
     int price;
     String status;
@@ -59,15 +61,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
     @NonNull
     @Override
     public FavoriteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.fav_item_layout,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.fav_item_layout, parent, false);
         return new FavoriteViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final FavoriteViewHolder holder, final int position) {
         //Khởi tạo adapter
-
-        if(!favoriteList.get(position).fImageCold.equals("empty")) {
+        if (!favoriteList.get(position).fImageCold.equals("empty")) {
             Picasso picasso = Picasso.with(context);
             picasso.setIndicatorsEnabled(false);
             picasso.load(favoriteList.get(position).fImageCold).networkPolicy(NetworkPolicy.OFFLINE)
@@ -84,8 +85,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
                             picasso.load(favoriteList.get(position).fImageCold).into(holder.image_product);
                         }
                     });
-        }
-        else if (!favoriteList.get(position).fImageHot.equals("empty")) {
+        } else if (!favoriteList.get(position).fImageHot.equals("empty")) {
             Picasso picasso = Picasso.with(context);
             picasso.setIndicatorsEnabled(false);
             picasso.load(favoriteList.get(position).fImageHot).networkPolicy(NetworkPolicy.OFFLINE)
@@ -102,8 +102,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
                             picasso.load(favoriteList.get(position).fImageHot).into(holder.image_product);
                         }
                     });
-        }
-        else {
+        } else {
             holder.image_product.setImageResource(R.drawable.thumb_default);
         }
         holder.name_drink.setText(favoriteList.get(position).fName);
@@ -130,12 +129,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
 
         image_cold = alertDialog.findViewById(R.id.cold_drink_fav_image);
         image_hot = alertDialog.findViewById(R.id.hot_drink_fav_image);
-        if(!favoriteList.get(position).fImageCold.equals("empty")){
+        if (!favoriteList.get(position).fImageCold.equals("empty")) {
             image_hot.setAlpha(123);
             image_cold.setAlpha(255);
             status = "cold";
-        }
-        else if(!favoriteList.get(position).fImageHot.equals("empty")){
+        } else if (!favoriteList.get(position).fImageHot.equals("empty")) {
             image_cold.setAlpha(123);
             image_hot.setAlpha(255);
             status = "hot";
@@ -144,26 +142,24 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
 
             @Override
             public void onClick(View v) {
-                if(!favoriteList.get(position).fImageCold.equals("empty")) {
+                if (!favoriteList.get(position).fImageCold.equals("empty")) {
                     image_cold.setAlpha(255);
                     image_hot.setAlpha(123);
                     status = "cold";
-                }
-                else{
-                    Toast.makeText(context,"Không có loại Lạnh cho sản phẩm này!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Không có loại Lạnh cho sản phẩm này!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         image_hot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!favoriteList.get(position).fImageHot.equals("empty")) {
+                if (!favoriteList.get(position).fImageHot.equals("empty")) {
                     image_hot.setAlpha(255);
                     image_cold.setAlpha(123);
                     status = "hot";
-                }
-                else{
-                    Toast.makeText(context,"Không có loại Nóng cho sản phẩm này!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Không có loại Nóng cho sản phẩm này!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -181,10 +177,11 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Common.cartRepository.isCart(favoriteList.get(position).fId) != 1) {
+                if (Common.cartRepository.isCart(favoriteList.get(position).fId, Common.CurrentUser.getId()) != 1) {
                     alertDialog.dismiss();
                     //Create DB
                     Cart cartItem = new Cart();
+                    cartItem.uId = Common.CurrentUser.getId();
                     cartItem.cId = favoriteList.get(position).fId;
                     cartItem.cName = favoriteList.get(position).fName;
                     cartItem.cQuanity = Integer.parseInt(elegantNumberButton.getNumber());
@@ -196,10 +193,9 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
                     //Add to DB
                     Common.cartRepository.insertCart(cartItem);
                     Toast.makeText(context, "Đã thêm " + elegantNumberButton.getNumber() + " " + favoriteList.get(position).fName + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
-                }
-                else{
+                } else {
                     alertDialog.dismiss();
-                    Toast.makeText(context,"Sản phẩm đã có trong giỏ hàng!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Sản phẩm đã có trong giỏ hàng!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -227,19 +223,19 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 final Favorite tempFav = favoriteList.get(index);
-                final DrinkFragment drinkFragment = (DrinkFragment)fragment.getActivity().getSupportFragmentManager().findFragmentByTag("DrinkFragment");
+                final DrinkFragment drinkFragment = (DrinkFragment) fragment.getActivity().getSupportFragmentManager().findFragmentByTag("DrinkFragment");
                 //Delete item from adapter
 
                 removeItem(index);
                 //Delete item from Room Database
                 Common.favoriteRepository.deleteFavItem(tempFav);
                 dialogInterface.dismiss();
-                Snackbar snackbar = Snackbar.make(Common.parentFavLayout,new StringBuilder(tempFav.fName).append(" đã được xóa khỏi danh sách Favorites").toString(),
+                Snackbar snackbar = Snackbar.make(Common.parentFavLayout, new StringBuilder(tempFav.fName).append(" đã được xóa khỏi danh sách Favorites").toString(),
                         Snackbar.LENGTH_LONG);
                 snackbar.setAction("UNDO", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        restore(tempFav,index);
+                        restore(tempFav, index);
                         Common.favoriteRepository.insertCart(tempFav);
                         drinkFragment.getDrink(Common.id_cate);
 
@@ -258,7 +254,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
         favoriteList.remove(index);
         notifyItemRemoved(index);
     }
-    private void restore(Favorite favorite, int index){
+
+    private void restore(Favorite favorite, int index) {
         favoriteList.add(index, favorite);
         notifyItemInserted(index);
     }

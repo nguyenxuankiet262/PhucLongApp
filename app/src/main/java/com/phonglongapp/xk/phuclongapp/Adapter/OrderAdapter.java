@@ -37,6 +37,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
+        if(orderList.get(position).getStatus().equals("Ordered")) {
+            holder.status_order.setText("Đã nhận order");
+        }
         holder.id_order.setText("#" + orderList.get(position).getId());
         holder.time_order.setText(Common.getTimeAgo(Long.parseLong(orderList.get(position).getId()),context));
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));

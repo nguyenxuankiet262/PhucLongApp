@@ -14,17 +14,20 @@ import io.reactivex.Flowable;
 
 @Dao
 public interface CartDAO {
-    @Query("SELECT EXISTS(SELECT 1 FROM Cart WHERE id=:itemId)")
-    int isCart(int itemId);
+    @Query("SELECT EXISTS(SELECT 1 FROM Cart WHERE id=:itemId AND idUser=:userId)")
+    int isCart(int itemId, String userId);
 
     @Query("SELECT * FROM Cart")
-    Flowable<List<Cart>> getCartItems();
+    List<Cart> getCartItems();
 
     @Query("SELECT * FROM Cart WHERE id = :cartItemID")
-    Flowable<List<Cart>> getCartById(int cartItemID);
+    List<Cart> getCartById(int cartItemID);
 
-    @Query("SELECT COUNT(*) FROM Cart")
-    int countCartItem();
+    @Query("SELECT * FROM Cart WHERE idUser = :userID")
+    List<Cart> getCartByUserId(String userID);
+
+    @Query("SELECT COUNT(*) FROM Cart WHERE idUser=:userID")
+    int countCartItem(String userID);
 
     @Insert
     void insertCart(Cart... carts);

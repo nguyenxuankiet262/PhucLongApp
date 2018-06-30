@@ -9,7 +9,7 @@ import android.content.Context;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Favorite;
 
-@Database(entities = {Cart.class,Favorite.class}, version = 1)
+@Database(entities = {Cart.class,Favorite.class}, version = 2)
 public abstract class DrinkRoomDatabase extends RoomDatabase {
     private static DrinkRoomDatabase sCartDatabase;
     public static final String DATABASE_NAME = "Room-database";

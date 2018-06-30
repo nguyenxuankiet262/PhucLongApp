@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mainFragment = new MainFragment();
         favoriteFragment = new FavoriteFragment();
         locationFragment = new LocationFragment();
+        Log.d("EMMM",Common.CurrentUser.getId());
 
         viewPager = (CustomViewPager) findViewById(R.id.fragment_content);
         adapter = new ViewPagerAdapter (MainActivity.this.getSupportFragmentManager());

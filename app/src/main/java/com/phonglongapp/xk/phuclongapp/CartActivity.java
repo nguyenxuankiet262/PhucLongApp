@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -48,18 +49,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener{
+public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener {
 
     EditText comment_text;
-    RelativeLayout relativeLayout,existLayout,emptyLayout;
+    RelativeLayout relativeLayout, existLayout, emptyLayout;
     RecyclerView cartList;
     FButton placeButton;
     TextView total;
     CartAdapter cartAdapter;
     List<Cart> local_listcart = new ArrayList<>();
-    FrameLayout details,payment,comment;
-    FButton next_details,next_payment,back_payment,next_comment,back_comment;
-    MaterialEditText name_detais, address_details,phone_details;
+    FrameLayout details, payment, comment;
+    FButton next_details, next_payment, back_payment, next_comment, back_comment;
+    MaterialEditText name_detais, address_details, phone_details;
     RadioGroup radioGroup;
 
     //Firebase
@@ -82,10 +83,10 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         placeButton = findViewById(R.id.order_button);
         total = findViewById(R.id.total_cart);
 
-        cartList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,false));
+        cartList.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         cartList.setHasFixedSize(true);
 
-        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0,ItemTouchHelper.LEFT,this);
+        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(cartList);
 
         loadCartItem();
@@ -93,11 +94,11 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         placeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Common.cartRepository.countCartItem() != 0) {
+                if (Common.cartRepository.countCartItem(Common.CurrentUser.getId()) != 0) {
                     final Order order = new Order();
-                    String[] descriptionData = {"Details", "Payment","Comment"};
+                    String[] descriptionData = {"Details", "Payment", "Comment"};
                     final AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
-                    final View itemView = LayoutInflater.from(CartActivity.this).inflate(R.layout.dialog_submit_place_order,null);
+                    final View itemView = LayoutInflater.from(CartActivity.this).inflate(R.layout.dialog_submit_place_order, null);
                     final StateProgressBar stateProgressBar = itemView.findViewById(R.id.state_process_bar);
                     stateProgressBar.setStateDescriptionData(descriptionData);
                     details = itemView.findViewById(R.id.dialog_details);
@@ -121,12 +122,13 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                     //Init Details
 
-                    name_detais.setText(Common.CurrentUser.getName());;
+                    name_detais.setText(Common.CurrentUser.getName());
+                    ;
 
-                    if(!Common.CurrentUser.getAddress().equals("empty")){
+                    if (!Common.CurrentUser.getAddress().equals("empty")) {
                         address_details.setText(Common.CurrentUser.getAddress());
                     }
-                    if(!Common.CurrentUser.getPhone().equals("empty")){
+                    if (!Common.CurrentUser.getPhone().equals("empty")) {
                         phone_details.setText(Common.CurrentUser.getPhone());
                     }
 
@@ -135,16 +137,15 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     next_details.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(!TextUtils.isEmpty(name_detais.getText().toString()) && !TextUtils.isEmpty(address_details.getText().toString()) && !TextUtils.isEmpty(phone_details.getText().toString())) {
+                            if (!TextUtils.isEmpty(name_detais.getText().toString()) && !TextUtils.isEmpty(address_details.getText().toString()) && !TextUtils.isEmpty(phone_details.getText().toString())) {
                                 order.setName(name_detais.getText().toString());
                                 order.setAddress(address_details.getText().toString());
                                 order.setPhone(phone_details.getText().toString());
                                 details.setVisibility(View.GONE);
                                 payment.setVisibility(View.VISIBLE);
                                 stateProgressBar.setCurrentStateNumber(StateProgressBar.StateNumber.TWO);
-                            }
-                            else {
-                                Toast.makeText(CartActivity.this,"Vui lòng nhập đầy đủ thông tin!",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(CartActivity.this, "Vui lòng nhập đầy đủ thông tin!", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -161,7 +162,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                         @Override
                         public void onClick(View v) {
                             int radioID = radioGroup.getCheckedRadioButtonId();
-                            switch (radioID){
+                            switch (radioID) {
                                 case R.id.radio_credit:
                                     order.setPayment("Credit card");
                                     break;
@@ -212,7 +213,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                             orderDatabase.child(Common.CurrentUser.getId()).child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         alertDialog.dismiss();
 
                                         progressDialog.dismiss();
@@ -229,8 +230,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                         }
                     });
-                }
-                else {
+                } else {
 
                 }
             }
@@ -239,27 +239,21 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
     @SuppressLint("CheckResult")
     private void loadCartItem() {
-        Common.cartRepository.getCartItems()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Consumer<List<Cart>>() {
-                    @Override
-                    public void accept(List<Cart> carts) throws Exception {
-                        if(Common.cartRepository.countCartItem() == 0) {
-                            emptyLayout.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            existLayout.setVisibility(View.VISIBLE);
-                            emptyLayout.setVisibility(View.GONE);
-                            displayCart(carts);
-                        }
-                    }
-                });
+        List<Cart> carts = Common.cartRepository.getCartByUserId(Common.CurrentUser.getId());
+
+        if (Common.cartRepository.countCartItem(Common.CurrentUser.getId()) == 0) {
+            emptyLayout.setVisibility(View.VISIBLE);
+        } else {
+            existLayout.setVisibility(View.VISIBLE);
+            emptyLayout.setVisibility(View.GONE);
+            displayCart(carts);
+        }
+
     }
 
     private void displayCart(List<Cart> carts) {
         local_listcart = carts;
-        cartAdapter = new CartAdapter(this,carts,total);
+        cartAdapter = new CartAdapter(this, carts, total);
         cartList.setAdapter(cartAdapter);
     }
 
@@ -271,7 +265,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-        if(viewHolder instanceof RecyclerView.ViewHolder){
+        if (viewHolder instanceof RecyclerView.ViewHolder) {
             String name = local_listcart.get(viewHolder.getAdapterPosition()).cName;
 
             final Cart deleteItem = local_listcart.get(viewHolder.getAdapterPosition());
@@ -281,18 +275,18 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
             Common.cartRepository.deleteCartItem(deleteItem);
 
-            Snackbar snackbar = Snackbar.make(relativeLayout,new StringBuilder(name).append(" đã được xóa khỏi giỏ hàng").toString(),
+            Snackbar snackbar = Snackbar.make(relativeLayout, new StringBuilder(name).append(" đã được xóa khỏi giỏ hàng").toString(),
                     Snackbar.LENGTH_LONG);
             snackbar.setAction("UNDO", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    cartAdapter.restoreCart(deleteItem,deleteItemIndex);
+                    cartAdapter.restoreCart(deleteItem, deleteItemIndex);
                     Common.cartRepository.insertCart(deleteItem);
                 }
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
-            if(Common.cartRepository.countCartItem() == 0){
+            if (Common.cartRepository.countCartItem(Common.CurrentUser.getId()) == 0) {
                 total.setText("0 VNĐ");
             }
         }

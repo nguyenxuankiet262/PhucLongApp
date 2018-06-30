@@ -23,23 +23,28 @@ public class CartDataSource implements ICartDataSource {
     }
 
     @Override
-    public int isCart(int itemId) {
-        return cartDAO.isCart(itemId);
+    public int isCart(int itemId, String userId) {
+        return cartDAO.isCart(itemId, userId);
     }
 
     @Override
-    public Flowable<List<Cart>> getCartItems() {
+    public List<Cart> getCartItems() {
         return cartDAO.getCartItems();
     }
 
     @Override
-    public Flowable<List<Cart>> getCartById(int cartItemID) {
+    public List<Cart> getCartById(int cartItemID) {
         return cartDAO.getCartById(cartItemID);
     }
 
     @Override
-    public int countCartItem() {
-        return cartDAO.countCartItem();
+    public List<Cart> getCartByUserId(String userID) {
+        return cartDAO.getCartByUserId(userID);
+    }
+
+    @Override
+    public int countCartItem(String userID) {
+        return cartDAO.countCartItem(userID);
     }
 
     @Override

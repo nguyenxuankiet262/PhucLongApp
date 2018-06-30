@@ -24,24 +24,32 @@ public class CartRepository implements ICartDataSource {
     }
 
     @Override
-    public Flowable<List<Cart>> getCartItems() {
+    public List<Cart> getCartItems() {
         return iCartDataSource.getCartItems();
     }
 
     @Override
-    public Flowable<List<Cart>> getCartById(int cartItemID) {
+    public List<Cart> getCartById(int cartItemID) {
         return iCartDataSource.getCartById(cartItemID);
     }
 
     @Override
-    public int isCart(int itemId) {
-        return iCartDataSource.isCart(itemId);
+    public List<Cart> getCartByUserId(String userID) {
+        return iCartDataSource.getCartByUserId(userID);
+    }
+
+
+    @Override
+    public int isCart(int itemId, String userId) {
+        return iCartDataSource.isCart(itemId, userId);
     }
 
     @Override
-    public int countCartItem() {
-        return iCartDataSource.countCartItem();
+    public int countCartItem(String userId) {
+        return iCartDataSource.countCartItem(userId);
     }
+
+
 
     @Override
     public void insertCart(Cart... carts) {

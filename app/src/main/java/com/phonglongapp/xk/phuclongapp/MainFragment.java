@@ -244,11 +244,11 @@ public class MainFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (Common.cartRepository.countCartItem() == 0)
+                if (Common.cartRepository.countCartItem(Common.CurrentUser.getId()) == 0)
                     badge.setVisibility(View.INVISIBLE);
                 else {
                     badge.setVisibility(View.VISIBLE);
-                    badge.setText(String.valueOf(Common.cartRepository.countCartItem()));
+                    badge.setText(String.valueOf(Common.cartRepository.countCartItem(Common.CurrentUser.getId())));
                 }
             }
         });

@@ -15,10 +15,13 @@ import io.reactivex.Flowable;
 @Dao
 public interface FavoriteDAO {
     @Query("SELECT * FROM Favorite")
-    Flowable<List<Favorite>> getFavItems();
+    List<Favorite> getFavItems();
 
-    @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE id=:itemId)")
-    int isFavorite(int itemId);
+    @Query("SELECT * FROM Favorite WHERE idUser=:userID")
+    List<Favorite> getFavItemsByUserID(String userID);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE id=:itemId AND idUser=:userId)")
+    int isFavorite(int itemId,String userId);
 
     @Insert
     void insertCart(Favorite... favorites);
@@ -26,6 +29,6 @@ public interface FavoriteDAO {
     @Delete
     void deleteFavItem(Favorite favorite);
 
-    @Query("SELECT COUNT(*) FROM Favorite")
-    int countFavItem();
+    @Query("SELECT COUNT(*) FROM Favorite WHERE idUser=:userID")
+    int countFavItem(String userID);
 }

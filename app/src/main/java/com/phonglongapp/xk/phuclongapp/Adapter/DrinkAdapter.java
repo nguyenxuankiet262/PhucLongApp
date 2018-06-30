@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,7 +105,8 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
 
         }
         //Favorite System
-        if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId())) == 1){
+        if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) == 1){
+            Log.d("EMM User_Fav",Common.CurrentUser.getId());
             holder.fav_btn.setImageResource(R.drawable.ic_favorite_green_24dp);
         }
         else{
@@ -113,7 +115,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         holder.fav_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId())) != 1){
+                if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) != 1){
                     AddOrRemoveFavorite(drinkList.get(position),true);
                     holder.fav_btn.setImageResource(R.drawable.ic_favorite_green_24dp);
                 }
@@ -207,11 +209,12 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                 cart_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(Common.cartRepository.isCart(Integer.parseInt(drinkList.get(position).getId())) != 1) {
+                        if(Common.cartRepository.isCart(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) != 1) {
                             alertDialog.dismiss();
                             //Create DB
 
                             Cart cartItem = new Cart();
+                            cartItem.uId = Common.CurrentUser.getId();
                             cartItem.cId = Integer.parseInt(drinkList.get(position).getId());
                             cartItem.cName = drinkList.get(position).getName();
                             cartItem.cQuanity = Integer.parseInt(numberButton.getNumber());
@@ -220,6 +223,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                             cartItem.cImageCold = drinkList.get(position).getImage_cold();
                             cartItem.cImageHot = drinkList.get(position).getImage_hot();
                             cartItem.cPriceItem = Integer.parseInt(drinkList.get(position).getPrice());
+                            Log.d("EMM Click Cart",cartItem.uId);
                             //Add to DB
                             Common.cartRepository.insertCart(cartItem);
                             Toast.makeText(context, "Đã thêm " + numberButton.getNumber() + " " + drinkList.get(position).getName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
@@ -320,6 +324,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
 
     private void AddOrRemoveFavorite(Drink drink, boolean isAdd) {
         Favorite favorite = new Favorite();
+        favorite.uId = Common.CurrentUser.getId();
         favorite.fId = Integer.parseInt(drink.getId());
         favorite.fName = drink.getName();
         favorite.fImageCold = drink.getImage_cold();

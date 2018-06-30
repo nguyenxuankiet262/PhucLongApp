@@ -9,12 +9,13 @@ import com.phonglongapp.xk.phuclongapp.Interface.ItemLongClickListener;
 import com.phonglongapp.xk.phuclongapp.R;
 
 public class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-    public TextView id_order, time_order;
+    public TextView id_order, time_order, status_order;
     public RecyclerView recyclerView;
     ItemClickListener itemClickListener;
     ItemLongClickListener itemLongClickListener;
     public OrderViewHolder(View itemView) {
         super(itemView);
+        status_order = itemView.findViewById(R.id.status_order_history);
         id_order = itemView.findViewById(R.id.id_order_history);
         time_order = itemView.findViewById(R.id.time_order_history);
         recyclerView = itemView.findViewById(R.id.list_order_history);

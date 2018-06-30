@@ -7,10 +7,11 @@ import java.util.List;
 import io.reactivex.Flowable;
 
 public interface ICartDataSource {
-    int isCart(int itemId);
-    Flowable<List<Cart>> getCartItems();
-    Flowable<List<Cart>> getCartById(int cartItemID);
-    int countCartItem();
+    int isCart(int itemId, String userId);
+    List<Cart> getCartItems();
+    List<Cart> getCartById(int cartItemID);
+    List<Cart> getCartByUserId(String userID);
+    int countCartItem(String userID);
     void insertCart(Cart... carts);
     void emptyCart();
     void updateCart(Cart... carts);
