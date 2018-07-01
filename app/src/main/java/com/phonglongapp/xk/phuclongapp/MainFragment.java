@@ -196,12 +196,29 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                Category cate = dataSnapshot.getValue(Category.class);
+                cate.setId(dataSnapshot.getKey());
+                for(int i = 0; i < categoryArrayList.size();i++){
+                    if(categoryArrayList.get(i).getId().equals(cate.getId())){
+                        categoryArrayList.remove(i);
+                        categoryArrayList.add(i,cate);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                Category cate = dataSnapshot.getValue(Category.class);
+                cate.setId(dataSnapshot.getKey());
+                for(int i = 0; i < categoryArrayList.size();i++){
+                    if(categoryArrayList.get(i).getId().equals(cate.getId())){
+                        categoryArrayList.remove(i);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    }
+                }
             }
 
             @Override

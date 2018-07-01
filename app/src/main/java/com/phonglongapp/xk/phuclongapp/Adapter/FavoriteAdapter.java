@@ -20,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.phonglongapp.xk.phuclongapp.DrinkFragment;
 import com.phonglongapp.xk.phuclongapp.Model.Drink;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
@@ -47,10 +51,6 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
     int price;
     String status;
     Fragment fragment;
-
-    public FavoriteAdapter(Context context) {
-        this.context = context;
-    }
 
     public FavoriteAdapter(Context context, List<Favorite> favoriteList, Fragment fragment) {
         this.context = context;
