@@ -18,7 +18,7 @@ public interface FavoriteDAO {
     Flowable<List<Favorite>> getFavItems();
 
     @Query("SELECT * FROM Favorite WHERE idUser=:userID")
-    List<Favorite> getFavItemsByUserID(String userID);
+    Flowable<List<Favorite>> getFavItemsByUserID(String userID);
 
     @Query("SELECT EXISTS(SELECT 1 FROM Favorite WHERE id=:itemId AND idUser=:userId)")
     int isFavorite(int itemId,String userId);

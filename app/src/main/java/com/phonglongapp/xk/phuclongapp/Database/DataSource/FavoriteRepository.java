@@ -28,7 +28,7 @@ public class FavoriteRepository implements IFavoriteDataSource{
     }
 
     @Override
-    public List<Favorite> getFavItemsByUserID(String userID){
+    public Flowable<List<Favorite>> getFavItemsByUserID(String userID){
         return favoriteDataSource.getFavItemsByUserID(userID);
     }
 

@@ -1,9 +1,11 @@
 package com.phonglongapp.xk.phuclongapp;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,19 +16,25 @@ import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.phonglongapp.xk.phuclongapp.Model.Rating;
 import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
+import com.squareup.haha.perflib.Main;
+import com.stepstone.apprating.listener.RatingDialogListener;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RatingDialogListener {
 
-    private BottomNavigationView bottomNavigationView;
     private Fragment mainFragment;
     private Fragment favoriteFragment;
     private Fragment locationFragment;
-    Fragment mFragment;
-    FragmentManager transaction;
+    FirebaseDatabase database;
+    DatabaseReference rating;
     CustomViewPager viewPager;
     ViewPagerAdapter adapter;
     AHBottomNavigation bottomNavigation;
@@ -36,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_main);
 
         //bottomNavigationView = findViewById(R.id.NavBot);
+        database = FirebaseDatabase.getInstance();
+        rating = database.getReference("Rating");
         mainFragment = new MainFragment();
         favoriteFragment = new FavoriteFragment();
         locationFragment = new LocationFragment();
@@ -131,5 +141,36 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
+    }
+    @Override
+    public void onPositiveButtonClicked(int i, String s) {
+        final ProgressDialog progressDialog;
+        progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setTitle("Submitting...");
+        progressDialog.setMessage("Please wait for a minute!");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
+        Rating rate = new Rating();
+        rate.setRate(String.valueOf(i));
+        rate.setComment(s);
+        rating.child(Common.idDrink).child(Common.CurrentUser.getId()).setValue(rate).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    progressDialog.dismiss();
+                    Toast.makeText(MainActivity.this,"Cảm ơn bạn đã đánh giá!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onNegativeButtonClicked() {
+        Toast.makeText(this,"No man", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNeutralButtonClicked() {
+
     }
 }

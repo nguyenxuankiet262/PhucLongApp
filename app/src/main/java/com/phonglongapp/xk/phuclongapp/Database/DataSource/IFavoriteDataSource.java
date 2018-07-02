@@ -12,7 +12,7 @@ import io.reactivex.Flowable;
 
 public interface IFavoriteDataSource {
     Flowable<List<Favorite>> getFavItems();
-    List<Favorite> getFavItemsByUserID(String userID);
+    Flowable<List<Favorite>> getFavItemsByUserID(String userID);
     int isFavorite(int itemId, String userId);
     void insertCart(Favorite... favorites);
     void deleteFavItem(Favorite favorite);

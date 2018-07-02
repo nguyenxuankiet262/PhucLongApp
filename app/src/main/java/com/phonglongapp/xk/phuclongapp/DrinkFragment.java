@@ -22,20 +22,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.phonglongapp.xk.phuclongapp.Adapter.DrinkAdapter;
+import com.phonglongapp.xk.phuclongapp.Model.Rating;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Model.Drink;
-import com.stepstone.apprating.listener.RatingDialogListener;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrinkFragment extends Fragment implements RatingDialogListener{
+public class DrinkFragment extends Fragment{
 
     RecyclerView list_drink;
 
     //FirebaseDatabase
     FirebaseDatabase database;
-    DatabaseReference drinks;
+    DatabaseReference drinks,rating;
     //Drink
     List<Drink> drinkList;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -68,6 +69,7 @@ public class DrinkFragment extends Fragment implements RatingDialogListener{
         drinkList = new ArrayList<Drink>();
         database = FirebaseDatabase.getInstance();
         drinks = database.getReference("Drink");
+        rating = database.getReference("Rating");
         drinks.keepSynced(true);
 
         //Ánh xạ
@@ -104,6 +106,7 @@ public class DrinkFragment extends Fragment implements RatingDialogListener{
         adapter = new DrinkAdapter(getActivity(),drinkList, getActivity());
         list_drink.setAdapter(adapter);
         getDrink(id_cate);
+
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -160,18 +163,5 @@ public class DrinkFragment extends Fragment implements RatingDialogListener{
            }
        });
     }
-    @Override
-    public void onPositiveButtonClicked(int i, String s) {
-        Toast.makeText(getActivity(),"OK",Toast.LENGTH_SHORT).show();
-    }
 
-    @Override
-    public void onNegativeButtonClicked() {
-        Toast.makeText(getActivity(),"No man", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onNeutralButtonClicked() {
-
-    }
 }

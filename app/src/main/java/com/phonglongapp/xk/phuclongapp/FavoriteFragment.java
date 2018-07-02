@@ -65,7 +65,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadFavItem() {
-        Common.favoriteRepository.getFavItems()
+        Common.favoriteRepository.getFavItemsByUserID(Common.CurrentUser.getId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<List<Favorite>>() {

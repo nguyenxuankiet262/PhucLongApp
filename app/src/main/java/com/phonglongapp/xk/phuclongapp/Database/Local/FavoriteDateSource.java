@@ -29,7 +29,7 @@ public class FavoriteDateSource implements IFavoriteDataSource {
     }
 
     @Override
-    public List<Favorite> getFavItemsByUserID(String userID) {
+    public Flowable<List<Favorite>> getFavItemsByUserID(String userID) {
         return favoriteDAO.getFavItemsByUserID(userID);
     }
 

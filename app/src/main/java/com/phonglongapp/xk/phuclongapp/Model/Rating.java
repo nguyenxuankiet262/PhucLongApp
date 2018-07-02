@@ -2,7 +2,7 @@ package com.phonglongapp.xk.phuclongapp.Model;
 
 public class Rating {
     private String id;
-    private String foodId;
+    private String drinkId;
     private String rate;
     private String comment;
 
@@ -10,9 +10,9 @@ public class Rating {
 
     }
 
-    public Rating(String id, String foodId, String rate, String comment) {
+    public Rating(String id, String drinkId, String rate, String comment) {
         this.id = id;
-        this.foodId = foodId;
+        this.drinkId = drinkId;
         this.rate = rate;
         this.comment = comment;
     }
@@ -25,12 +25,12 @@ public class Rating {
         this.id = id;
     }
 
-    public String getFoodId() {
-        return foodId;
+    public String getDrinkId() {
+        return drinkId;
     }
 
-    public void setFoodId(String foodId) {
-        this.foodId = foodId;
+    public void setDrinkId(String drinkId) {
+        this.drinkId = drinkId;
     }
 
     public String getRate() {

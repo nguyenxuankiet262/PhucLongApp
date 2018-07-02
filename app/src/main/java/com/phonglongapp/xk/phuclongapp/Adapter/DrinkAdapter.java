@@ -16,6 +16,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.phonglongapp.xk.phuclongapp.Model.Rating;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Favorite;
@@ -46,6 +53,10 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     String status = "empty";
     FragmentActivity drinkactivity;
 
+    //FirebaseDatabase
+    FirebaseDatabase database;
+    DatabaseReference rating;
+
     public DrinkAdapter(Context context, List<Drink> drinkList, FragmentActivity drinkactivity) {
         this.context = context;
         this.drinkList = drinkList;
@@ -55,14 +66,14 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     @NonNull
     @Override
     public DrinkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.drink_layout,parent,false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.drink_layout, parent, false);
         return new DrinkViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final DrinkViewHolder holder, final int position) {
         //Khởi tạo image
-        if(!drinkList.get(position).getImage_cold().equals("empty")) {
+        if (!drinkList.get(position).getImage_cold().equals("empty")) {
             Picasso picasso = Picasso.with(context);
             picasso.setIndicatorsEnabled(false);
             picasso.load(drinkList.get(position).getImage_cold()).networkPolicy(NetworkPolicy.OFFLINE)
@@ -80,8 +91,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                         }
                     });
             status = "cold";
-        }
-        else if (!drinkList.get(position).getImage_hot().equals("empty")) {
+        } else if (!drinkList.get(position).getImage_hot().equals("empty")) {
             Picasso picasso = Picasso.with(context);
             picasso.setIndicatorsEnabled(false);
             picasso.load(drinkList.get(position).getImage_hot()).networkPolicy(NetworkPolicy.OFFLINE)
@@ -99,27 +109,24 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                         }
                     });
             status = "hot";
-        }
-        else {
+        } else {
             holder.image_product.setImageResource(R.drawable.thumb_default);
         }
         //Favorite System
-        if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) == 1){
-            Log.d("EMM User_Fav",Common.CurrentUser.getId());
+        if (Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()), Common.CurrentUser.getId()) == 1) {
+            Log.d("EMM User_Fav", Common.CurrentUser.getId());
             holder.fav_btn.setImageResource(R.drawable.ic_favorite_green_24dp);
-        }
-        else{
+        } else {
             holder.fav_btn.setImageResource(R.drawable.ic_favorite_border_green_24dp);
         }
         holder.fav_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) != 1){
-                    AddOrRemoveFavorite(drinkList.get(position),true);
+                if (Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()), Common.CurrentUser.getId()) != 1) {
+                    AddOrRemoveFavorite(drinkList.get(position), true);
                     holder.fav_btn.setImageResource(R.drawable.ic_favorite_green_24dp);
-                }
-                else{
-                    AddOrRemoveFavorite(drinkList.get(position),false);
+                } else {
+                    AddOrRemoveFavorite(drinkList.get(position), false);
                     holder.fav_btn.setImageResource(R.drawable.ic_favorite_border_green_24dp);
                 }
             }
@@ -131,11 +138,16 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View v, final int position) {
+                Common.idDrink = drinkList.get(position).getId();
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(true);
-                View itemView = LayoutInflater.from(context).inflate(R.layout.activity_drink_detail,null);
+                View itemView = LayoutInflater.from(context).inflate(R.layout.activity_drink_detail, null);
 
                 //Ánh xạ
+                database = FirebaseDatabase.getInstance();
+                rating = database.getReference("Rating");
+                loadRating(drinkList.get(position).getId(),position);
+
                 rating_btn = itemView.findViewById(R.id.btn_rating);
                 ratingBar = itemView.findViewById(R.id.rating_bar);
                 image_banner = itemView.findViewById(R.id.image_detail_drink);
@@ -208,7 +220,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                 cart_btn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(Common.cartRepository.isCart(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) != 1) {
+                        if (Common.cartRepository.isCart(Integer.parseInt(drinkList.get(position).getId()), Common.CurrentUser.getId()) != 1) {
                             alertDialog.dismiss();
                             //Create DB
 
@@ -222,14 +234,13 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                             cartItem.cImageCold = drinkList.get(position).getImage_cold();
                             cartItem.cImageHot = drinkList.get(position).getImage_hot();
                             cartItem.cPriceItem = Integer.parseInt(drinkList.get(position).getPrice());
-                            Log.d("EMM Click Cart",cartItem.uId);
+                            Log.d("EMM Click Cart", cartItem.uId);
                             //Add to DB
                             Common.cartRepository.insertCart(cartItem);
                             Toast.makeText(context, "Đã thêm " + numberButton.getNumber() + " " + drinkList.get(position).getName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();
-                        }
-                        else{
+                        } else {
                             alertDialog.dismiss();
-                            Toast.makeText(context,"Sản phẩm đã có trong giỏ hàng!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "Sản phẩm đã có trong giỏ hàng!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -241,7 +252,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                         .setPositiveButtonText("Chấp nhận")
                         .setNegativeButtonText("Hủy")
                         .setNoteDescriptions(Arrays.asList("Very Bad", "Not Good", "Normal", "Good", "Very Good"))
-                        .setDefaultRating(2)
+                        .setDefaultRating(5)
                         .setTitle("Rating this drink")
                         .setDescription("Please select start and give us your feedback")
                         .setTitleTextColor(R.color.colorPrimaryDark)
@@ -255,7 +266,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
             }
 
             private void loadDrinkDetail(final Drink drink) {
-                if(!drink.getImage_cold().equals("empty")) {
+                if (!drink.getImage_cold().equals("empty")) {
                     Picasso picasso = Picasso.with(context);
                     picasso.setIndicatorsEnabled(false);
                     picasso.load(drink.getImage_cold()).networkPolicy(NetworkPolicy.OFFLINE)
@@ -273,8 +284,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                                 }
                             });
                     status = "cold";
-                }
-                else if (!drink.getImage_hot().equals("empty")) {
+                } else if (!drink.getImage_hot().equals("empty")) {
                     Picasso picasso = Picasso.with(context);
                     picasso.setIndicatorsEnabled(false);
                     picasso.load(drink.getImage_hot()).networkPolicy(NetworkPolicy.OFFLINE)
@@ -292,20 +302,19 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                                 }
                             });
                     status = "hot";
-                }
-                else {
+                } else {
                     image_banner.setImageResource(R.drawable.thumb_default);
                     status = "empty";
                 }
                 drinkname.setText(drink.getName().toString());
                 drinkprice.setText(Common.ConvertIntToMoney(drink.getPrice()));
-                if(drink.getImage_cold().equals("empty")){
+                if (drink.getImage_cold().equals("empty")) {
                     image_cold.setVisibility(View.INVISIBLE);
                 }
-                if(drink.getImage_hot().equals("empty")){
+                if (drink.getImage_hot().equals("empty")) {
                     image_hot.setVisibility(View.INVISIBLE);
                 }
-                if(drink.getImage_hot().equals("empty") && drink.getImage_cold().equals("empty")){
+                if (drink.getImage_hot().equals("empty") && drink.getImage_cold().equals("empty")) {
                     image_hot.setVisibility(View.INVISIBLE);
                     image_cold.setVisibility(View.INVISIBLE);
                 }
@@ -321,6 +330,32 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         });
     }
 
+    private void loadRating(String id, final int position) {
+        rating.child(drinkList.get(position).getId()).addValueEventListener(new ValueEventListener() {
+            int count = 0, sum = 0;
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    Rating item = postSnapshot.getValue(Rating.class);
+                    item.setId(postSnapshot.getKey());
+                    item.setDrinkId(drinkList.get(position).getId());
+                    sum += Integer.parseInt(item.getRate());
+                    count++;
+                }
+                if(count != 0) {
+                    float average = sum / count;
+                    ratingBar.setRating(average);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void AddOrRemoveFavorite(Drink drink, boolean isAdd) {
         Favorite favorite = new Favorite();
         favorite.uId = Common.CurrentUser.getId();
@@ -330,13 +365,13 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         favorite.fImageHot = drink.getImage_hot();
         favorite.fPrice = Integer.parseInt(drink.getPrice());
         favorite.fMenu = drink.getMenuId();
-        if(isAdd){
+        if (isAdd) {
             Common.favoriteRepository.insertCart(favorite);
-        }
-        else {
+        } else {
             Common.favoriteRepository.deleteFavItem(favorite);
         }
     }
+
     @Override
     public int getItemCount() {
         return drinkList.size();

@@ -24,6 +24,7 @@ public class Common {
     public static int BackPress;
     public static View parentFavLayout;
     public static boolean checkDrinkFragmentOpen;
+    public static String idDrink;
 
     public static boolean isConnectedToInternet(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
