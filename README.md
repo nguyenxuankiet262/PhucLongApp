@@ -1,2 +1,2 @@
 # PhucLongApp
-Quản lí quán trà sữa
+Quản lí quán trà sữa [Firebase]
