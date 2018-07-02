@@ -38,9 +38,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolder> {
         if(cartList.get(position).cStatus.equals("cold")) {
             Picasso.with(context).load(cartList.get(position).cImageCold).into(holder.imageView_history);
         }
-        else
+        else if(cartList.get(position).cStatus.equals("hot"))
         {
             Picasso.with(context).load(cartList.get(position).cImageHot).into(holder.imageView_history);
+        }
+        else {
+            holder.imageView_history.setImageResource(R.drawable.thumb_default);
         }
         holder.money_drink.setText(Common.ConvertIntToMoney(cartList.get(position).cPrice+""));
         holder.name_drink_history.setText(cartList.get(position).cName);

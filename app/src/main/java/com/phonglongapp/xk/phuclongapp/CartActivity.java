@@ -223,6 +223,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                                         Toast.makeText(CartActivity.this, "Đặt món thành công! Xin cám ơn quý khách", Toast.LENGTH_LONG).show();
 
                                         total.setText("0 VNĐ");
+                                        loadCartItem();
                                     }
                                 }
                             });
