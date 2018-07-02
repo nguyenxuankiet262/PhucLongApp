@@ -28,6 +28,9 @@ import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.squareup.haha.perflib.Main;
 import com.stepstone.apprating.listener.RatingDialogListener;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 public class MainActivity extends AppCompatActivity implements RatingDialogListener {
 
     private Fragment mainFragment;
@@ -153,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         Rating rate = new Rating();
         rate.setRate(String.valueOf(i));
         rate.setComment(s);
+        Date date = new Date();
+        rate.setDate(DateFormat.getDateInstance(DateFormat.MEDIUM).format(date));
         rating.child(Common.idDrink).child(Common.CurrentUser.getId()).setValue(rate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

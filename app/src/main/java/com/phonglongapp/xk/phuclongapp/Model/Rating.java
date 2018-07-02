@@ -5,16 +5,26 @@ public class Rating {
     private String drinkId;
     private String rate;
     private String comment;
+    private String date;
 
     public Rating(){
 
     }
 
-    public Rating(String id, String drinkId, String rate, String comment) {
+    public Rating(String id, String drinkId, String rate, String comment, String date) {
         this.id = id;
         this.drinkId = drinkId;
         this.rate = rate;
         this.comment = comment;
+        this.date = date;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getId() {

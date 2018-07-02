@@ -3,8 +3,10 @@ package com.phonglongapp.xk.phuclongapp.Adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.phonglongapp.xk.phuclongapp.Model.Rating;
+import com.phonglongapp.xk.phuclongapp.Model.User;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Favorite;
@@ -36,6 +40,7 @@ import com.squareup.picasso.Picasso;
 import com.stepstone.apprating.AppRatingDialog;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -53,9 +58,15 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     String status = "empty";
     FragmentActivity drinkactivity;
 
+    List<Rating> ratingList;
+    List<User> userList;
+
+    CommentAdapter adapter;
+    RecyclerView listCmt;
+
     //FirebaseDatabase
     FirebaseDatabase database;
-    DatabaseReference rating;
+    DatabaseReference rating,user;
 
     public DrinkAdapter(Context context, List<Drink> drinkList, FragmentActivity drinkactivity) {
         this.context = context;
@@ -138,14 +149,26 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View v, final int position) {
+                ratingList = new ArrayList<>();
+                userList = new ArrayList<>();
                 Common.idDrink = drinkList.get(position).getId();
                 final AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setCancelable(true);
                 View itemView = LayoutInflater.from(context).inflate(R.layout.activity_drink_detail, null);
-
-                //Ánh xạ
+                listCmt = itemView.findViewById(R.id.list_comment);
+                LinearLayoutManager mLayoutManager = new LinearLayoutManager(context);
+                mLayoutManager.setReverseLayout(true);
+                mLayoutManager.setStackFromEnd(true);
+                listCmt.setLayoutManager(mLayoutManager);
                 database = FirebaseDatabase.getInstance();
                 rating = database.getReference("Rating");
+                user = database.getReference("User");
+                //Ánh xạ listCmt
+                adapter = new CommentAdapter(context, ratingList, userList);
+                listCmt.setAdapter(adapter);
+                getItemCmt(drinkList.get(position).getId());
+
+                //Ánh xạ
                 loadRating(drinkList.get(position).getId(),position);
 
                 rating_btn = itemView.findViewById(R.id.btn_rating);
@@ -328,6 +351,53 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                 });
             }
         });
+    }
+
+    private void getItemCmt(String id) {
+        rating.child(id).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Rating rate = dataSnapshot.getValue(Rating.class);
+                rate.setId(dataSnapshot.getKey());
+                ratingList.add(rate);
+                user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        user.setId(dataSnapshot.getKey());
+                        userList.add(user);
+                        adapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     private void loadRating(String id, final int position) {
