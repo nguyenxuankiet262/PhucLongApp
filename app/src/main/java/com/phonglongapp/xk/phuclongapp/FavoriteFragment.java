@@ -65,20 +65,28 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadFavItem() {
-        List<Favorite> favorites = Common.favoriteRepository.getFavItemsByUserID(Common.CurrentUser.getId());
-
-        if (Common.favoriteRepository.countFavItem(Common.CurrentUser.getId()) == 0) {
-            emptyLayout.setVisibility(View.VISIBLE);
-        } else {
-            existLayout.setVisibility(View.VISIBLE);
-            emptyLayout.setVisibility(View.GONE);
-            displayFav(favorites);
-        }
+        Common.favoriteRepository.getFavItems()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Consumer<List<Favorite>>() {
+                    @Override
+                    public void accept(List<Favorite> favorites) throws Exception {
+                        if (Common.favoriteRepository.countFavItem(Common.CurrentUser.getId()) != 0) {
+                            existLayout.setVisibility(View.VISIBLE);
+                            emptyLayout.setVisibility(View.GONE);
+                        }
+                        else{
+                            emptyLayout.setVisibility(View.VISIBLE);
+                        }
+                        displayFav(favorites);
+                    }
+                });
 
     }
 
     private void displayFav(List<Favorite> favorites) {
         FavoriteAdapter adapter = new FavoriteAdapter(getActivity(), favorites, this);
         list_fav.setAdapter(adapter);
+
     }
 }

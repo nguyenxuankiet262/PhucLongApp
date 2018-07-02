@@ -71,7 +71,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
                 //context.startActivity(intent);
                 Bundle bundle = new Bundle();
                 bundle.putString("CategoryId",index);
-                Common.id_cate = index;
                 bundle.putString("CategoryName",categories.get(position).getName());
                 DrinkFragment drinkActivity  = new DrinkFragment();
                 drinkActivity.setArguments(bundle);

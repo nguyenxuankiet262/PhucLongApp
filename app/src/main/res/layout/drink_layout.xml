@@ -22,7 +22,6 @@
             android:id="@+id/image_drink"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-
             />
 
         <TextView

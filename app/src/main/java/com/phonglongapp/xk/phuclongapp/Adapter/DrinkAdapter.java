@@ -102,7 +102,6 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         }
         else {
             holder.image_product.setImageResource(R.drawable.thumb_default);
-
         }
         //Favorite System
         if(Common.favoriteRepository.isFavorite(Integer.parseInt(drinkList.get(position).getId()),Common.CurrentUser.getId()) == 1){

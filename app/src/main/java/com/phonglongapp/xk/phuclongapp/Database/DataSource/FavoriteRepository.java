@@ -23,7 +23,7 @@ public class FavoriteRepository implements IFavoriteDataSource{
     }
 
     @Override
-    public List<Favorite> getFavItems() {
+    public Flowable<List<Favorite>> getFavItems() {
         return favoriteDataSource.getFavItems();
     }
 

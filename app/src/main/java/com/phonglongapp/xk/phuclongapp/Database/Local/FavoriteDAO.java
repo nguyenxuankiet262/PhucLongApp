@@ -15,7 +15,7 @@ import io.reactivex.Flowable;
 @Dao
 public interface FavoriteDAO {
     @Query("SELECT * FROM Favorite")
-    List<Favorite> getFavItems();
+    Flowable<List<Favorite>> getFavItems();
 
     @Query("SELECT * FROM Favorite WHERE idUser=:userID")
     List<Favorite> getFavItemsByUserID(String userID);

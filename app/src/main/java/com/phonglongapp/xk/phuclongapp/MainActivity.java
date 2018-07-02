@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         if (Common.BackPress > 0) {
             super.onBackPressed();
             Common.BackPress--;
+            Common.checkDrinkFragmentOpen = false;
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Bạn có muốn thoát chương trình không?");

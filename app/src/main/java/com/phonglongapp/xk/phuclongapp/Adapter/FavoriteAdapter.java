@@ -216,7 +216,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
         builder.setPositiveButton("Không", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                if(Common.checkDrinkFragmentOpen == true) {
+                    Toast.makeText(context, "1", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(context,"0",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         builder.setNegativeButton("Chấp nhận", new DialogInterface.OnClickListener() {
@@ -226,6 +231,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
                 final DrinkFragment drinkFragment = (DrinkFragment) fragment.getActivity().getSupportFragmentManager().findFragmentByTag("DrinkFragment");
                 //Delete item from adapter
 
+                final String id = favoriteList.get(index).fMenu;
                 removeItem(index);
                 //Delete item from Room Database
                 Common.favoriteRepository.deleteFavItem(tempFav);
@@ -237,13 +243,16 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteViewHolder> {
                     public void onClick(View v) {
                         restore(tempFav, index);
                         Common.favoriteRepository.insertCart(tempFav);
-                        drinkFragment.getDrink(Common.id_cate);
-
+                        if(Common.checkDrinkFragmentOpen == true) {
+                            drinkFragment.getDrink(id);
+                        }
                     }
                 });
                 snackbar.setActionTextColor(Color.YELLOW);
                 snackbar.show();
-                drinkFragment.getDrink(Common.id_cate);
+                if(Common.checkDrinkFragmentOpen == true) {
+                    drinkFragment.getDrink(id);
+                }
             }
         });
         AlertDialog alertDialog = builder.create();

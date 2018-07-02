@@ -24,7 +24,7 @@ public class FavoriteDateSource implements IFavoriteDataSource {
     }
 
     @Override
-    public List<Favorite> getFavItems() {
+    public Flowable<List<Favorite>> getFavItems() {
         return favoriteDAO.getFavItems();
     }
 

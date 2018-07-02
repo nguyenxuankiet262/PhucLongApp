@@ -59,6 +59,7 @@ public class DrinkFragment extends Fragment implements RatingDialogListener{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Common.BackPress = 1;
+        Common.checkDrinkFragmentOpen = true;
         setHasOptionsMenu(true);
     }
 
@@ -123,12 +124,29 @@ public class DrinkFragment extends Fragment implements RatingDialogListener{
 
            @Override
            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+               Drink drink = dataSnapshot.getValue(Drink.class);
+               drink.setId(dataSnapshot.getKey());
+               for(int i = 0; i < drinkList.size();i++){
+                   if(drinkList.get(i).getId().equals(drink.getId())){
+                       drinkList.remove(i);
+                       drinkList.add(i,drink);
+                       adapter.notifyDataSetChanged();
+                       break;
+                   }
+               }
            }
 
            @Override
            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+               Drink drink = dataSnapshot.getValue(Drink.class);
+               drink.setId(dataSnapshot.getKey());
+               for(int i = 0; i < drinkList.size();i++){
+                   if(drinkList.get(i).getId().equals(drink.getId())){
+                       drinkList.remove(i);
+                       adapter.notifyDataSetChanged();
+                       break;
+                   }
+               }
            }
 
            @Override

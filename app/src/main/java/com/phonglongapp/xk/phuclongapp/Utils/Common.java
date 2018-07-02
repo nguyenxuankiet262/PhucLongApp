@@ -23,7 +23,7 @@ public class Common {
     public static FavoriteRepository favoriteRepository;
     public static int BackPress;
     public static View parentFavLayout;
-    public static String id_cate;
+    public static boolean checkDrinkFragmentOpen;
 
     public static boolean isConnectedToInternet(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
