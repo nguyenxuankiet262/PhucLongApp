@@ -46,7 +46,6 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
         holder.recyclerView.setHasFixedSize(true);
         adapter = new HistoryAdapter(context,orderList.get(position).getCartList());
         holder.recyclerView.setAdapter(adapter);
-
     }
 
 

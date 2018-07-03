@@ -36,7 +36,7 @@ public class DrinkFragment extends Fragment{
 
     //FirebaseDatabase
     FirebaseDatabase database;
-    DatabaseReference drinks,rating;
+    DatabaseReference drinks;
     //Drink
     List<Drink> drinkList;
     CollapsingToolbarLayout collapsingToolbarLayout;
@@ -66,10 +66,9 @@ public class DrinkFragment extends Fragment{
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        drinkList = new ArrayList<Drink>();
+        drinkList = new ArrayList<>();
         database = FirebaseDatabase.getInstance();
         drinks = database.getReference("Drink");
-        rating = database.getReference("Rating");
         drinks.keepSynced(true);
 
         //Ánh xạ

@@ -6,17 +6,28 @@ public class Rating {
     private String rate;
     private String comment;
     private String date;
+    private String status;
 
     public Rating(){
 
     }
 
-    public Rating(String id, String drinkId, String rate, String comment, String date) {
+
+    public Rating(String id, String drinkId, String rate, String comment, String date, String status) {
         this.id = id;
         this.drinkId = drinkId;
         this.rate = rate;
         this.comment = comment;
         this.date = date;
+        this.status = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getDate() {

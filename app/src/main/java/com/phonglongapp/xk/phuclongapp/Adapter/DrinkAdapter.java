@@ -66,7 +66,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
 
     //FirebaseDatabase
     FirebaseDatabase database;
-    DatabaseReference rating,user;
+    DatabaseReference rating, user;
 
     public DrinkAdapter(Context context, List<Drink> drinkList, FragmentActivity drinkactivity) {
         this.context = context;
@@ -169,7 +169,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                 getItemCmt(drinkList.get(position).getId());
 
                 //Ánh xạ
-                loadRating(drinkList.get(position).getId(),position);
+                loadRating(drinkList.get(position).getId(), position);
 
                 rating_btn = itemView.findViewById(R.id.btn_rating);
                 ratingBar = itemView.findViewById(R.id.rating_bar);
@@ -359,21 +359,23 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Rating rate = dataSnapshot.getValue(Rating.class);
                 rate.setId(dataSnapshot.getKey());
-                ratingList.add(rate);
-                user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        user.setId(dataSnapshot.getKey());
-                        userList.add(user);
-                        adapter.notifyDataSetChanged();
-                    }
+                if (!rate.getStatus().equals("0")) {
+                    ratingList.add(rate);
+                    user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            user.setId(dataSnapshot.getKey());
+                            userList.add(user);
+                            adapter.notifyDataSetChanged();
+                        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 
             @Override
@@ -413,7 +415,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                     sum += Integer.parseInt(item.getRate());
                     count++;
                 }
-                if(count != 0) {
+                if (count != 0) {
                     float average = sum / count;
                     ratingBar.setRating(average);
                 }
