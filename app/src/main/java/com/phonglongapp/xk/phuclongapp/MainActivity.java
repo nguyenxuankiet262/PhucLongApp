@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.phonglongapp.xk.phuclongapp.Model.Rating;
+import com.phonglongapp.xk.phuclongapp.Service.ListenOrder;
 import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         //bottomNavigationView = findViewById(R.id.NavBot);
         database = FirebaseDatabase.getInstance();
         rating = database.getReference("Rating");
+        Intent service = new Intent(MainActivity.this, ListenOrder.class);
+        startService(service);
         mainFragment = new MainFragment();
         favoriteFragment = new FavoriteFragment();
         locationFragment = new LocationFragment();
