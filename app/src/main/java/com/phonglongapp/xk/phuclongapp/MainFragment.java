@@ -408,7 +408,7 @@ public class MainFragment extends Fragment {
 
     }
     private Order checkOrder() {
-        order.child(Common.CurrentUser.getId()).orderByKey().limitToLast(1).addChildEventListener(new ChildEventListener() {
+        order.orderByChild("userID").equalTo(Common.CurrentUser.getId()).limitToLast(1).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 temp = dataSnapshot.getValue(Order.class);

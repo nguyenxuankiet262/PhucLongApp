@@ -26,6 +26,7 @@ import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.squareup.haha.perflib.Main;
+import com.squareup.leakcanary.LeakCanary;
 import com.stepstone.apprating.listener.RatingDialogListener;
 
 import java.text.DateFormat;

@@ -246,7 +246,6 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                         if (Common.cartRepository.isCart(Integer.parseInt(drinkList.get(position).getId()), Common.CurrentUser.getId()) != 1) {
                             alertDialog.dismiss();
                             //Create DB
-
                             Cart cartItem = new Cart();
                             cartItem.uId = Common.CurrentUser.getId();
                             cartItem.cId = Integer.parseInt(drinkList.get(position).getId());
@@ -257,7 +256,6 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                             cartItem.cImageCold = drinkList.get(position).getImage_cold();
                             cartItem.cImageHot = drinkList.get(position).getImage_hot();
                             cartItem.cPriceItem = Integer.parseInt(drinkList.get(position).getPrice());
-                            Log.d("EMM Click Cart", cartItem.uId);
                             //Add to DB
                             Common.cartRepository.insertCart(cartItem);
                             Toast.makeText(context, "Đã thêm " + numberButton.getNumber() + " " + drinkList.get(position).getName() + " vào giỏ hàng", Toast.LENGTH_SHORT).show();

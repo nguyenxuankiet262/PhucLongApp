@@ -7,6 +7,7 @@ import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.squareup.leakcanary.LeakCanary;
 
 import info.hoang8f.widget.FButton;
 

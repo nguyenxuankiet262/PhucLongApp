@@ -197,8 +197,9 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                         public void onClick(View v) {
                             order.setPrice(total.getText().toString());
                             order.setNote(comment_text.getText().toString());
-                            order.setStatus("Ordered");
+                            order.setStatus("0");
                             order.setCartList(local_listcart);
+                            order.setUserID(Common.CurrentUser.getId());
 
                             stateProgressBar.setAllStatesCompleted(true);
 
@@ -210,7 +211,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                             progressDialog.setCanceledOnTouchOutside(false);
                             progressDialog.show();
 
-                            orderDatabase.child(Common.CurrentUser.getId()).child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {

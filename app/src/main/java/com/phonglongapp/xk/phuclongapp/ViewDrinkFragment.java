@@ -79,7 +79,7 @@ public class ViewDrinkFragment extends Fragment {
     }
 
     private void loadHistory() {
-        order.child(Common.CurrentUser.getId()).addChildEventListener(new ChildEventListener() {
+        order.orderByChild("userID").equalTo(Common.CurrentUser.getId()).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Order temp = dataSnapshot.getValue(Order.class);
