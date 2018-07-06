@@ -13,4 +13,6 @@
     <color name="colorDesperate">#888888</color>
     <color name="colorOpenStore">#03ae03</color>
     <color name="colorDetails">#5da0de</color>
+    <color name="colorOTW">#113ddb</color>
+    <color name="colorSc">#efef00</color>
 </resources>

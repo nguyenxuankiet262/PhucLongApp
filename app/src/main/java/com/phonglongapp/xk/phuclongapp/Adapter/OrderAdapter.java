@@ -2,6 +2,7 @@ package com.phonglongapp.xk.phuclongapp.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,8 +38,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        if(orderList.get(position).getStatus().equals("Ordered")) {
+        if(orderList.get(position).getStatus().equals("0")) {
             holder.status_order.setText("Đã nhận order");
+            holder.status_order.setTextColor(ContextCompat.getColor(context,R.color.colorOpenStore));
+        }
+        if(orderList.get(position).getStatus().equals("1")){
+            holder.status_order.setText("Đang trên đường");
+            holder.status_order.setTextColor(ContextCompat.getColor(context,R.color.colorOTW));
+        }
+        if(orderList.get(position).getStatus().equals("2")){
+            holder.status_order.setText("Thành công");
+            holder.status_order.setTextColor(ContextCompat.getColor(context,R.color.colorSc));
+        }
+        if(orderList.get(position).getStatus().equals("3")){
+            holder.status_order.setText("Đã hủy");
+            holder.status_order.setTextColor(ContextCompat.getColor(context,R.color.colorCancel));
         }
         holder.id_order.setText("#" + orderList.get(position).getId());
         holder.time_order.setText(Common.getTimeAgo(Long.parseLong(orderList.get(position).getId()),context));
