@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
@@ -41,14 +42,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Text;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import info.hoang8f.widget.FButton;
@@ -135,6 +132,7 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         Init();
         //On click
+
         cover_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -334,7 +332,6 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         accept_btn_my_account = view.findViewById(R.id.accept_my_account_btn);
         accept_btn_password = view.findViewById(R.id.accept_password_btn);
         accept_btn_details = view.findViewById(R.id.accept_details_btn);
-        noty_switch = view.findViewById(R.id.noty_switch_btn);
     }
 
     private void Init() {

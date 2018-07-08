@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,7 +39,6 @@ import static android.os.SystemClock.sleep;
 public class StartActivity extends AppCompatActivity {
 
     private ImageView logoView;
-    private TextView contText;
     private Animation anim_alpha,anim_blink;
     private FirebaseAuth auth;
     //FirebaseDatabase
@@ -53,8 +53,6 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         auth = FirebaseAuth.getInstance();
         logoView = (ImageView) findViewById(R.id.logo_Image);
-        contText = (TextView)findViewById(R.id.continueText);
-        contText.setVisibility(View.INVISIBLE);
         anim_blink = new AlphaAnimation(0.0f,1.0f);
         anim_blink.setDuration(20);
         anim_blink.setStartOffset(20);
@@ -69,8 +67,6 @@ public class StartActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                contText.setVisibility(View.VISIBLE);
-                contText.startAnimation(anim_blink);
                 new Timer().schedule(new TimerTask(){
                     public void run() {
                         StartActivity.this.runOnUiThread(new Runnable() {
@@ -79,13 +75,17 @@ public class StartActivity extends AppCompatActivity {
                                     database = FirebaseDatabase.getInstance();
                                     currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                     uid = currentUser.getUid();
+
                                     user = database.getReference("User").child(uid);
                                     user.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             User user = dataSnapshot.getValue(User.class);
-                                            user.setId(dataSnapshot.getKey());
+                                            user.setId(uid);
                                             Common.CurrentUser = user;
+                                            Intent intent = new Intent(StartActivity.this, MainActivity.class);;
+                                            startActivity(intent);
+                                            finish();
                                         }
 
                                         @Override
@@ -93,10 +93,7 @@ public class StartActivity extends AppCompatActivity {
 
                                         }
                                     });
-                                    // User is signed in (getCurrentUser() will be null if not signed in)
-                                    Intent intent = new Intent(StartActivity.this, MainActivity.class);;
-                                    startActivity(intent);
-                                    finish();
+                                    // User is signed in (getCurrentUser() will be null if not signed in
                                 }
                                 else {
                                     Intent intent = new Intent(StartActivity.this, LoginActivity.class);

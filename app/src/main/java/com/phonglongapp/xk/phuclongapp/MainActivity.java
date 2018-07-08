@@ -17,12 +17,15 @@ import android.widget.Toast;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.phonglongapp.xk.phuclongapp.Model.Rating;
-import com.phonglongapp.xk.phuclongapp.Service.ListenOrder;
+import com.phonglongapp.xk.phuclongapp.Model.Token;
 import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
@@ -51,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         //bottomNavigationView = findViewById(R.id.NavBot);
         database = FirebaseDatabase.getInstance();
         rating = database.getReference("Rating");
-        Intent service = new Intent(MainActivity.this, ListenOrder.class);
-        startService(service);
+        //Intent service = new Intent(MainActivity.this, ListenOrder.class);
+        //startService(service);
         mainFragment = new MainFragment();
         favoriteFragment = new FavoriteFragment();
         locationFragment = new LocationFragment();
-        Log.d("EMMM",Common.CurrentUser.getId());
 
         viewPager = (CustomViewPager) findViewById(R.id.fragment_content);
         adapter = new ViewPagerAdapter (MainActivity.this.getSupportFragmentManager());
@@ -64,6 +66,15 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         adapter.addFragment(favoriteFragment);
         adapter.addFragment(locationFragment);
         viewPager.setAdapter(adapter);
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String newToken = instanceIdResult.getToken();
+                updateToken(newToken);
+            }
+        });
+
+
 
 //        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 //            @Override
@@ -118,6 +129,13 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
                 }
             }
         });
+    }
+
+    private void updateToken(String t) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference token = db.getReference("Token");
+        Token temp = new Token(t,false);
+        token.child(Common.CurrentUser.getId()).setValue(temp);
     }
 
     @Override

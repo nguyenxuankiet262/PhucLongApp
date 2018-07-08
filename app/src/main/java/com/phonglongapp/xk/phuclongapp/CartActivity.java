@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,14 +26,23 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.kofigyan.stateprogressbar.StateProgressBar;
 import com.kofigyan.stateprogressbar.components.StateItem;
 import com.kofigyan.stateprogressbar.listeners.OnStateItemClickListener;
 import com.phonglongapp.xk.phuclongapp.Adapter.CartAdapter;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
+import com.phonglongapp.xk.phuclongapp.Model.MyResponse;
+import com.phonglongapp.xk.phuclongapp.Model.Notification;
 import com.phonglongapp.xk.phuclongapp.Model.Order;
+import com.phonglongapp.xk.phuclongapp.Model.Sender;
+import com.phonglongapp.xk.phuclongapp.Model.Token;
+import com.phonglongapp.xk.phuclongapp.Retrofit.APIService;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Cart;
 import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
@@ -48,6 +58,9 @@ import info.hoang8f.widget.FButton;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CartActivity extends AppCompatActivity implements RecyclerItemTouchHelperListener {
 
@@ -66,11 +79,14 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
     //Firebase
     FirebaseDatabase database;
     DatabaseReference orderDatabase;
+    APIService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+
+        apiService = Common.getFCMService();
 
         relativeLayout = findViewById(R.id.cart_layout);
         existLayout = findViewById(R.id.cart_exist_layout);
@@ -210,20 +226,26 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                             progressDialog.setMessage("Please wait for a minute!");
                             progressDialog.setCanceledOnTouchOutside(false);
                             progressDialog.show();
+                            final String idOrder = String.valueOf(System.currentTimeMillis());
 
-                            orderDatabase.child(String.valueOf(System.currentTimeMillis())).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            orderDatabase.child(idOrder).setValue(order).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         alertDialog.dismiss();
-
                                         progressDialog.dismiss();
 
                                         Common.cartRepository.emptyCart();
 
                                         Toast.makeText(CartActivity.this, "Đặt món thành công! Xin cám ơn quý khách", Toast.LENGTH_LONG).show();
 
+
                                         total.setText("0 VNĐ");
+
+                                        sendNotification(idOrder, alertDialog, progressDialog);
+
+
+
                                         loadCartItem();
                                     }
                                 }
@@ -235,6 +257,55 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                 } else {
 
                 }
+            }
+        });
+    }
+
+    private void sendNotification(final String idUser, final AlertDialog alertDialog, final ProgressDialog progressDialog) {
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Token");
+        tokens.orderByChild("tokenServer").equalTo(true).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                Token serverToken = dataSnapshot.getValue(Token.class);
+                Notification notification = new Notification("Có order mới #"+ idUser,"New Order");
+                Sender content = new Sender(serverToken.getToken(),notification);
+
+                apiService.sendNoti(content).enqueue(new Callback<MyResponse>() {
+                    @Override
+                    public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
+                        if(response.body().success == 1){
+                            finish();
+                        }
+                        else {
+                            Toast.makeText(CartActivity.this, "Lỗi bất ngờ", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<MyResponse> call, Throwable t) {
+                        Log.e("Errorr",t.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
     }

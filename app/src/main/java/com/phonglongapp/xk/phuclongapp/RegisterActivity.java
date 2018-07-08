@@ -188,6 +188,9 @@ public class RegisterActivity extends AppCompatActivity {
                             User user = dataSnapshot.getValue(User.class);
                             user.setId(dataSnapshot.getKey());
                             Common.CurrentUser = user;
+                            Intent mainIntent = new Intent(RegisterActivity.this,MainActivity.class);
+                            startActivity(mainIntent);
+                            finish();
                         }
 
                         @Override
@@ -195,9 +198,6 @@ public class RegisterActivity extends AppCompatActivity {
 
                         }
                     });
-                    Intent mainIntent = new Intent(RegisterActivity.this,MainActivity.class);
-                    startActivity(mainIntent);
-                    finish();
                 }
                 else{
                     progressDialog.hide();

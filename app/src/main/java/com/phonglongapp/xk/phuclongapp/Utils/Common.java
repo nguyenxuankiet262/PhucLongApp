@@ -12,6 +12,8 @@ import com.phonglongapp.xk.phuclongapp.Database.DataSource.FavoriteRepository;
 import com.phonglongapp.xk.phuclongapp.Database.Local.DrinkRoomDatabase;
 import com.phonglongapp.xk.phuclongapp.Model.Coordinates;
 import com.phonglongapp.xk.phuclongapp.Model.User;
+import com.phonglongapp.xk.phuclongapp.Retrofit.APIService;
+import com.phonglongapp.xk.phuclongapp.Retrofit.RetrofitClient;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -49,6 +51,12 @@ public class Common {
     }
 
     public static User CurrentUser;
+
+    private static final String BASE_URL = "https://fcm.googleapis.com/";
+
+    public static APIService getFCMService(){
+        return RetrofitClient.getClient(BASE_URL).create(APIService.class);
+    }
 
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
