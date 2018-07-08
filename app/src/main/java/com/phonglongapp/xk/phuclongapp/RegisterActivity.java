@@ -92,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
         if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(firstpass) && !TextUtils.isEmpty(secondpass)){
             if(Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                 if(firstpass.equals(secondpass)) {
-                    return true;
+                    if(firstpass )
                 }
                 else {
                     Toast.makeText(RegisterActivity.this,"Nhập sai mật khẩu !!!",Toast.LENGTH_LONG).show();

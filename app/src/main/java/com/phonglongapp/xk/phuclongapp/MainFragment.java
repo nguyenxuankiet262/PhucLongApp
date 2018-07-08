@@ -72,7 +72,6 @@ public class MainFragment extends Fragment {
     DatabaseReference catogories, banners, order;
 
     //Slider
-    HashMap<String, String> banner_list;
     SliderLayout sliderLayout;
 
     //Category
@@ -139,7 +138,6 @@ public class MainFragment extends Fragment {
 
         //Slider
         sliderLayout = view.findViewById(R.id.slider);
-        banner_list = new HashMap<>();
         setupSlider();
 
         //Init Database
@@ -159,18 +157,13 @@ public class MainFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot post : dataSnapshot.getChildren()) {
                     Banner banner = post.getValue(Banner.class);
-                    banner_list.put(banner.getName(), banner.getImage());
-                }
-                for (String nameBanner : banner_list.keySet()) {
-
-                    //Create slider
                     TextSliderView textSliderView = new TextSliderView(getActivity());
-                    textSliderView.description(nameBanner)
-                            .image(banner_list.get(nameBanner))
+                    textSliderView.description(banner.getName())
+                            .image(banner.getImage())
                             .setScaleType(BaseSliderView.ScaleType.Fit);
                     sliderLayout.addSlider(textSliderView);
-                    banners.removeEventListener(this);
                 }
+                banners.removeEventListener(this);
             }
 
             @Override
