@@ -92,7 +92,13 @@ public class RegisterActivity extends AppCompatActivity {
         if(!TextUtils.isEmpty(username) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(firstpass) && !TextUtils.isEmpty(secondpass)){
             if(Patterns.EMAIL_ADDRESS.matcher(email).matches()){
                 if(firstpass.equals(secondpass)) {
-                    if(firstpass )
+                    if(firstpass.length() < 6){
+                        Toast.makeText(RegisterActivity.this,"Mật khẩu phải trên 6 kí tự !",Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    else {
+                        return true;
+                    }
                 }
                 else {
                     Toast.makeText(RegisterActivity.this,"Nhập sai mật khẩu !!!",Toast.LENGTH_LONG).show();
