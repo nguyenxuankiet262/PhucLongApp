@@ -242,7 +242,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                         total.setText("0 VNĐ");
 
-                                        sendNotification(idOrder, alertDialog, progressDialog);
+                                        sendNotification(idOrder);
 
 
 
@@ -261,7 +261,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
         });
     }
 
-    private void sendNotification(final String idUser, final AlertDialog alertDialog, final ProgressDialog progressDialog) {
+    private void sendNotification(final String idUser) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Token");
         tokens.orderByChild("tokenServer").equalTo(true).addChildEventListener(new ChildEventListener() {
             @Override

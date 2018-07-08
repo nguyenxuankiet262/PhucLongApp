@@ -15,6 +15,7 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
@@ -26,6 +27,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -48,12 +50,15 @@ import info.hoang8f.widget.FButton;
 
 public class LoginMainActivity extends AppCompatActivity {
 
-    private MaterialEditText email, password, fgEmail;
+    private MaterialEditText email, password;
     private FButton loginBtn;
     private LoginButton fbBtn;
     private ProgressDialog progressDialog;
     private Toolbar mToolBar;
     private TextView forgotpassword;
+    EditText fgEmail;
+    FButton cancel,next;
+
 
     private FirebaseAuth mAuth;
     private CallbackManager callbackManager;
@@ -171,40 +176,50 @@ public class LoginMainActivity extends AppCompatActivity {
     }
 
     private void showForgotDialog() {
-        LayoutInflater inflater = this.getLayoutInflater();
-        View forgot_view = inflater.inflate(R.layout.forgot_password_layout, null);
-        fgEmail = forgot_view.findViewById(R.id.fgEmail);
-
-        AlertDialog dialog = new AlertDialog.Builder(this,R.style.AlertDialogStyle)
-                .setTitle("Forgot Password?")
-                .setMessage("Enter your email")
-                .setView(forgot_view)
-                .setIcon(R.drawable.ic_security_black_24dp)
-                .setPositiveButton("YES",null)
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
-                .create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(LoginMainActivity.this);
+        final View itemView = LayoutInflater.from(LoginMainActivity.this).inflate(R.layout.forgot_password_layout, null);
+        fgEmail = itemView.findViewById(R.id.email_text);
+        cancel = itemView.findViewById(R.id.cancel_forgot);
+        next = itemView.findViewById(R.id.next_forgot);
+        builder.setView(itemView);
+        final AlertDialog alertDialog = builder.show();
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onShow(final DialogInterface dialog) {
-                Button positiveBtn = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                positiveBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String fgText = fgEmail.getText().toString().trim();
-                        if(check_email(fgText)){
-                            dialog.dismiss();
-                            Toast.makeText(LoginMainActivity.this,"OK",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+            public void onClick(View v) {
+                alertDialog.dismiss();
             }
         });
-        dialog.show();
+        next.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if(check_email(fgEmail.getText().toString().trim())){
+                    progressDialog.setTitle("Logging in");
+                    progressDialog.setMessage("Please wait for a minute!");
+                    progressDialog.setCanceledOnTouchOutside(false);
+                    progressDialog.show();
+                    mAuth.sendPasswordResetEmail(fgEmail.getText().toString().trim()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                alertDialog.dismiss();
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginMainActivity.this,"Kiểm tra hướng dẫn trong email của bạn!",Toast.LENGTH_SHORT).show();
+                            }
+                            else {
+                                alertDialog.dismiss();
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginMainActivity.this,"Không tìm thấy địa chỉ email!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(LoginMainActivity.this,"Nhập đúng định dạng email!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
     }
 
