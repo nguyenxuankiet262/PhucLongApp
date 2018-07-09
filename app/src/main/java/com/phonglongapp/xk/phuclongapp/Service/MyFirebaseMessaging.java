@@ -39,7 +39,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService  {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         if(remoteMessage.getData() != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 sendNoti(remoteMessage);
             }
             else{
@@ -73,6 +73,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService  {
                 .setContentText(notification.getBody())
                 .setSound(uri);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(new Random().nextInt(),builder.build());
+        notificationManager.notify(0,builder.build());
     }
 }

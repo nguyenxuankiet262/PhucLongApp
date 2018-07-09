@@ -263,7 +263,7 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
     private void sendNotification(final String idUser) {
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Token");
-        tokens.orderByChild("tokenServer").equalTo(true).addChildEventListener(new ChildEventListener() {
+        tokens.orderByChild("isServerToken").equalTo(true).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Token serverToken = dataSnapshot.getValue(Token.class);
