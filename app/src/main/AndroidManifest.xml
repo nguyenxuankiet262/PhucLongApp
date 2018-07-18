@@ -60,7 +60,7 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MyTheme.TranslucentNavigation"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".SearchActivity"
             android:screenOrientation="portrait" />
@@ -96,6 +96,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <provider android:authorities="com.facebook.app.FacebookContentProvider2081103335437366"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true"/>
     </application>
 
 </manifest>

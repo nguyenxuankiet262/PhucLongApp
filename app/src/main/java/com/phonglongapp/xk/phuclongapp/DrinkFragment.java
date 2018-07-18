@@ -1,5 +1,7 @@
 package com.phonglongapp.xk.phuclongapp;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -16,6 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +31,8 @@ import com.phonglongapp.xk.phuclongapp.Adapter.DrinkAdapter;
 import com.phonglongapp.xk.phuclongapp.Model.Rating;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.phonglongapp.xk.phuclongapp.Model.Drink;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 
 import java.util.ArrayList;

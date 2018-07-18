@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.facebook.FacebookSdk;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_main);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         //bottomNavigationView = findViewById(R.id.NavBot);
         database = FirebaseDatabase.getInstance();
@@ -176,12 +179,13 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         progressDialog.setCanceledOnTouchOutside(false);
         progressDialog.show();
         Rating rate = new Rating();
+        rate.setDrinkId(Common.idDrink);
         rate.setRate(String.valueOf(i));
         rate.setComment(s);
         Date date = new Date();
         rate.setDate(DateFormat.getDateInstance(DateFormat.MEDIUM).format(date));
         rate.setStatus("0");
-        rating.child(Common.idDrink).child(Common.CurrentUser.getId()).setValue(rate).addOnCompleteListener(new OnCompleteListener<Void>() {
+        rating.child(Common.CurrentUser.getId()).setValue(rate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){

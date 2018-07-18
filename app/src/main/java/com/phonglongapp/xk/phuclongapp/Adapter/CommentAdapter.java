@@ -44,7 +44,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
         holder.name_cmt.setText(userList.get(position).getName());
         holder.date_comment.setText("-"+ratingList.get(position).getDate()+"-");
         holder.comment.setText(ratingList.get(position).getComment());
-        int count = 0, sum = 0;
         holder.ratingBar.setRating(Float.parseFloat(ratingList.get(position).getRate()));
     }
 

@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal">
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_comment"
             android:layout_width="60dp"
@@ -18,9 +19,7 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/avt2"
             app:civ_border_color="@color/white"
-            app:civ_border_width="2dp"
-            app:layout_anchor="@id/app_bar_user"
-            app:layout_anchorGravity="bottom|center_horizontal" />
+            app:civ_border_width="2dp" />
         <LinearLayout
             android:layout_marginTop="2dp"
             android:layout_width="match_parent"

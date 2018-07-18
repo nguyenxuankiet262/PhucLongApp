@@ -43,15 +43,19 @@
                     android:textStyle="bold"
                     android:textColor="@color/colorBlack"
                     android:drawableLeft="@drawable/ic_location_on_black_10dp"/>
+
                 <TextView
-                    android:layout_marginTop="2dp"
-                    android:layout_marginLeft="3dp"
-                    android:drawableLeft="@drawable/ic_access_time_black_10dp"
+                    android:id="@+id/time_open"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=" Đang mở cửa"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="2dp"
+                    android:drawableLeft="@drawable/ic_access_time_black_10dp"
+                    android:text="Đang mở cửa"
+                    android:textStyle="bold"
+                    android:drawablePadding="2dp"
                     android:textColor="@color/colorOpenStore"
-                    android:textSize="10sp"/>
+                    android:textSize="10sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

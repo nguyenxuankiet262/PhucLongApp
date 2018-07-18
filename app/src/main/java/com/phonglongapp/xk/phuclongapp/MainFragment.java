@@ -1,6 +1,7 @@
 package com.phonglongapp.xk.phuclongapp;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -343,7 +344,7 @@ public class MainFragment extends Fragment {
                 popup.dismiss();
                 InfoFragment infoFragment = new InfoFragment();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_fragment, infoFragment, "InfoFragment").addToBackStack(null).commit();
+                transaction.replace(R.id.main_fragment, infoFragment , "InfoFragment").addToBackStack(null).commit();
             }
         });
 

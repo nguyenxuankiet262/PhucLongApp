@@ -1,7 +1,12 @@
 package com.phonglongapp.xk.phuclongapp.Adapter;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +23,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.share.Sharer;
+import com.facebook.share.model.SharePhoto;
+import com.facebook.share.model.SharePhotoContent;
+import com.facebook.share.widget.ShareDialog;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.phonglongapp.xk.phuclongapp.MainActivity;
 import com.phonglongapp.xk.phuclongapp.Model.Rating;
 import com.phonglongapp.xk.phuclongapp.Model.User;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
@@ -37,6 +50,7 @@ import com.phonglongapp.xk.phuclongapp.ViewHolder.DrinkViewHolder;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 import com.stepstone.apprating.AppRatingDialog;
 
 import java.text.NumberFormat;
@@ -67,6 +81,32 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     //FirebaseDatabase
     FirebaseDatabase database;
     DatabaseReference rating, user;
+    ShareDialog shareDialog;
+
+    Target target = new Target() {
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            SharePhoto photo = new SharePhoto.Builder()
+                    .setBitmap(bitmap)
+                    .build();
+            if (ShareDialog.canShow(SharePhotoContent.class)) {
+                SharePhotoContent content = new SharePhotoContent.Builder()
+                        .addPhoto(photo)
+                        .build();
+                shareDialog.show(content);
+            }
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+            Toast.makeText(context, "Faild", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+    };
 
     public DrinkAdapter(Context context, List<Drink> drinkList, FragmentActivity drinkactivity) {
         this.context = context;
@@ -83,6 +123,18 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final DrinkViewHolder holder, final int position) {
+        //Init facebook
+        shareDialog = new ShareDialog(drinkactivity);
+        holder.share_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!drinkList.get(position).getImage_cold().equals("empty")) {
+                    Picasso.with(context).load(drinkList.get(position).getImage_cold()).into(target);
+                } else if (!drinkList.get(position).getImage_hot().equals("empty")) {
+                    Picasso.with(context).load(drinkList.get(position).getImage_hot()).into(target);
+                }
+            }
+        });
         //Khởi tạo image
         if (!drinkList.get(position).getImage_cold().equals("empty")) {
             Picasso picasso = Picasso.with(context);
@@ -352,12 +404,12 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     }
 
     private void getItemCmt(String id) {
-        rating.child(id).addChildEventListener(new ChildEventListener() {
+        rating.orderByChild("status").equalTo("1").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Rating rate = dataSnapshot.getValue(Rating.class);
-                rate.setId(dataSnapshot.getKey());
-                if (!rate.getStatus().equals("0")) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot post : dataSnapshot.getChildren()) {
+                    Rating rate = post.getValue(Rating.class);
+                    rate.setId(post.getKey());
                     ratingList.add(rate);
                     user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -377,27 +429,10 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
-
     }
 
     private void loadRating(String id, final int position) {

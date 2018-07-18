@@ -3,6 +3,7 @@ package com.phonglongapp.xk.phuclongapp;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -88,17 +90,17 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
     private static final int GALLERY_PICK = 1;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Common.BackPress = 1;
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_info, container, false);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        Common.BackPress = 1;
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -125,8 +127,13 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         camera = view.findViewById(R.id.camera_user);
         cover_user = view.findViewById(R.id.image_avt_user);
 
+        InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+
         //Ánh xạ
         AnhXa(view);
+
+        imgr.showSoftInput(name_user,0);
 
         //Khởi tạo
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -321,12 +328,12 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
     private void AnhXa(View view) {
         btn_add_credit = view.findViewById(R.id.credit_btn);
         btn_add_paypal = view.findViewById(R.id.paypal_btn);
-        btn_add_voucher = view.findViewById(R.id.voucher_btn);
         email_user = view.findViewById(R.id.email_info);
         pass_old = view.findViewById(R.id.password_old_info);
         pass_new_1 = view.findViewById(R.id.password_new_1);
         pass_new_2 = view.findViewById(R.id.password_new_2);
         name_user = view.findViewById(R.id.name_info);
+        name_user.requestFocus();
         address_user = view.findViewById(R.id.address_info);
         phone_user = view.findViewById(R.id.phone_info);
         accept_btn_my_account = view.findViewById(R.id.accept_my_account_btn);
