@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -127,13 +128,13 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         camera = view.findViewById(R.id.camera_user);
         cover_user = view.findViewById(R.id.image_avt_user);
 
-        InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        //InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
         //Ánh xạ
         AnhXa(view);
 
-        imgr.showSoftInput(name_user,0);
+        //imgr.showSoftInput(name_user,0);
 
         //Khởi tạo
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -198,7 +199,7 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
                 currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if (!emailText.isEmpty()) {
+                        if (check_email(emailText)) {
                             progressDialog = new ProgressDialog(getActivity());
                             progressDialog.setTitle("Uploading email...");
                             progressDialog.setMessage("Please wait for a minute!");
@@ -221,8 +222,6 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
                                     }
                                 }
                             });
-                        } else {
-                            Toast.makeText(getActivity(), "Vui lòng nhập địa chỉ email!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -325,6 +324,22 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         //Check Noty click
     }
 
+    private boolean check_email(String fgEmail) {
+        if(!TextUtils.isEmpty(fgEmail)){
+            if(Patterns.EMAIL_ADDRESS.matcher(fgEmail).matches()){
+                return true;
+            }
+            else{
+                Toast.makeText(getActivity(),"Nhập sai định dạng email !!!", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        }
+        else{
+            Toast.makeText(getActivity(),"Vui lòng nhập đầy đủ thông tin !!!", Toast.LENGTH_LONG).show();
+            return false;
+        }
+    }
+
     private void AnhXa(View view) {
         btn_add_credit = view.findViewById(R.id.credit_btn);
         btn_add_paypal = view.findViewById(R.id.paypal_btn);
@@ -333,7 +348,7 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         pass_new_1 = view.findViewById(R.id.password_new_1);
         pass_new_2 = view.findViewById(R.id.password_new_2);
         name_user = view.findViewById(R.id.name_info);
-        name_user.requestFocus();
+        //name_user.requestFocus();
         address_user = view.findViewById(R.id.address_info);
         phone_user = view.findViewById(R.id.phone_info);
         accept_btn_my_account = view.findViewById(R.id.accept_my_account_btn);

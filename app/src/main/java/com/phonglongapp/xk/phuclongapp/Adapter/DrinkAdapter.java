@@ -3,6 +3,7 @@ package com.phonglongapp.xk.phuclongapp.Adapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -83,6 +84,8 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     DatabaseReference rating, user;
     ShareDialog shareDialog;
 
+    CallbackManager callbackManager;
+
     Target target = new Target() {
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -124,6 +127,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull final DrinkViewHolder holder, final int position) {
         //Init facebook
+        callbackManager = CallbackManager.Factory.create();
         shareDialog = new ShareDialog(drinkactivity);
         holder.share_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,7 +222,7 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
                 //Ánh xạ listCmt
                 adapter = new CommentAdapter(context, ratingList, userList);
                 listCmt.setAdapter(adapter);
-                getItemCmt(drinkList.get(position).getId());
+                getItemCmt(drinkList.get(position).getId(), position);
 
                 //Ánh xạ
                 loadRating(drinkList.get(position).getId(), position);
@@ -403,28 +407,32 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
         });
     }
 
-    private void getItemCmt(String id) {
-        rating.orderByChild("status").equalTo("1").addValueEventListener(new ValueEventListener() {
+    private void getItemCmt(String id, final int position) {
+        Log.d("TTT",drinkList.get(position).getId());
+        rating.orderByChild("drinkId").equalTo(drinkList.get(position).getId()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot post : dataSnapshot.getChildren()) {
                     Rating rate = post.getValue(Rating.class);
-                    rate.setId(post.getKey());
-                    ratingList.add(rate);
-                    user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            user.setId(dataSnapshot.getKey());
-                            userList.add(user);
-                            adapter.notifyDataSetChanged();
-                        }
+                    Log.d("TTT",rate.getStatus());
+                    if(rate.getStatus().equals("1")) {
+                        rate.setId(post.getKey());
+                        ratingList.add(rate);
+                        user.child(rate.getId()).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                User user = dataSnapshot.getValue(User.class);
+                                user.setId(dataSnapshot.getKey());
+                                userList.add(user);
+                                adapter.notifyDataSetChanged();
+                            }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    }
                 }
             }
 
@@ -436,17 +444,19 @@ public class DrinkAdapter extends RecyclerView.Adapter<DrinkViewHolder> {
     }
 
     private void loadRating(String id, final int position) {
-        rating.child(drinkList.get(position).getId()).addValueEventListener(new ValueEventListener() {
+        rating.orderByChild("drinkId").equalTo(drinkList.get(position).getId()).addValueEventListener(new ValueEventListener() {
             int count = 0, sum = 0;
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     Rating item = postSnapshot.getValue(Rating.class);
-                    item.setId(postSnapshot.getKey());
-                    item.setDrinkId(drinkList.get(position).getId());
-                    sum += Integer.parseInt(item.getRate());
-                    count++;
+                    if(item.getStatus().equals("1")) {
+                        item.setId(postSnapshot.getKey());
+                        item.setDrinkId(drinkList.get(position).getId());
+                        sum += Integer.parseInt(item.getRate());
+                        count++;
+                    }
                 }
                 if (count != 0) {
                     float average = sum / count;

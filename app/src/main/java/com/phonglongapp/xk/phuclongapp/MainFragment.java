@@ -124,6 +124,7 @@ public class MainFragment extends Fragment {
         list_menu = view.findViewById(R.id.list_category);
         list_menu.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         list_menu.setHasFixedSize(true);
+        list_menu.setNestedScrollingEnabled(false);
 
         checkOrder();
 

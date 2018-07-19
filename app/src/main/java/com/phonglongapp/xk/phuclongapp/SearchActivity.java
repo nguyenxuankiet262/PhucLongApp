@@ -36,14 +36,16 @@ public class SearchActivity extends AppCompatActivity implements RatingDialogLis
     List<String> suggest_list;
     List<Drink> seach_drink_list;
 
+    int count = 5;
+
     //Adapter
     DrinkAdapter searchAdapter, adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        seach_drink_list = new ArrayList<Drink>();
-        suggest_list = new ArrayList<String>();
+        seach_drink_list = new ArrayList<>();
+        suggest_list = new ArrayList<>();
 
         database = FirebaseDatabase.getInstance();
         searchItem = database.getReference("Drink");
@@ -59,12 +61,13 @@ public class SearchActivity extends AppCompatActivity implements RatingDialogLis
 
         searchRecyclerList.setAdapter(adapter);
 
+
+
         loadDrinks();
 
         //Setting searchBar
+        searchBar.setMaxSuggestionCount(5);
         searchBar.setLastSuggestions(suggest_list);
-
-        searchBar.setCardViewElevation(10);
         searchBar.addTextChangeListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

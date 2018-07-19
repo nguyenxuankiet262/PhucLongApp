@@ -32,7 +32,7 @@ public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback{
     @Override
     public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
         View foreground = ((CartViewHolder)viewHolder).view_foreground;
-        getDefaultUIUtil();
+        getDefaultUIUtil().clearView(foreground);
         super.clearView(recyclerView, viewHolder);
     }
 

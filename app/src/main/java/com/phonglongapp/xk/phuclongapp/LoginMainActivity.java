@@ -214,9 +214,6 @@ public class LoginMainActivity extends AppCompatActivity {
                         }
                     });
                 }
-                else{
-                    Toast.makeText(LoginMainActivity.this,"Nhập đúng định dạng email!",Toast.LENGTH_SHORT).show();
-                }
             }
         });
 

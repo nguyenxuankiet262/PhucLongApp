@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
     Context context;
     List<Cart> cartList;
     TextView total;
+
     public CartAdapter(Context context, List<Cart> cartList, TextView total){
         this.context = context;
         this.cartList = cartList;
@@ -95,8 +97,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         holder.quanity_cart.setOnValueChangeListener(new ElegantNumberButton.OnValueChangeListener() {
             @Override
             public void onValueChange(ElegantNumberButton view, int oldValue, int newValue) {
+                Log.d("TTT","Change");
                 int price;
                 price = cartList.get(position).cPriceItem * Integer.parseInt(holder.quanity_cart.getNumber());
+
+                Log.d("TTT",NumberFormat.getNumberInstance(Locale.US).format(price) + " VNĐ");
 
                 holder.price_cart.setText(NumberFormat.getNumberInstance(Locale.US).format(price) + " VNĐ");
 
@@ -104,6 +109,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
                 cart.cPrice = price;
                 cart.cQuanity = newValue;
                 Common.cartRepository.updateCart(cart);
+                int sum = 0;
+                for (int i = 0; i < cartList.size(); i++) {
+                    sum += cartList.get(i).cPrice;
+                }
+                total.setText(NumberFormat.getNumberInstance(Locale.US).format(sum) + " VNĐ");
 
             }
         });
