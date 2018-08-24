@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,6 +52,9 @@ import com.phonglongapp.xk.phuclongapp.Utils.Common;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import info.hoang8f.widget.FButton;
 
@@ -58,7 +63,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChangedListener {
+public class InfoFragment extends Fragment{
 
     //Storage Firebase
     private StorageReference mStorageRef;
@@ -69,20 +74,18 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
     FirebaseUser currentUser;
 
     //View
-    TextView btn_add_credit, btn_add_paypal, btn_add_voucher;
+    TextView btn_add_credit, btn_add_paypal;
     MaterialEditText email_user, pass_old, pass_new_1, pass_new_2, name_user, address_user, phone_user;
     FButton accept_btn_my_account, accept_btn_password, accept_btn_details;
     Switch noty_switch;
     Toolbar toolbar;
-    CollapsingToolbarLayout collapsingToolbarLayout;
 
     private static final int PERCENTAGE_TO_ANIMATE_AVATAR = 20;
     private boolean mIsAvatarShown = true;
 
     private CircleImageView mProfileImage;
-    ImageView camera, cover_user;
+    ImageView camera;
     private int mMaxScrollSize;
-    AppBarLayout appbarLayout;
 
     //Progress dialog
     ProgressDialog progressDialog;
@@ -99,7 +102,7 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Common.BackPress = 1;
+        Common.BackPressA = 1;
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -117,17 +120,8 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
                 getActivity().onBackPressed();
             }
         });
-        collapsingToolbarLayout = view.findViewById(R.id.collapsing_account);
-        collapsingToolbarLayout.setExpandedTitleTextAppearance(R.style.AppbarUser);
-        collapsingToolbarLayout.setCollapsedTitleTextAppearance(R.style.CollapsedAppbar);
-
-        appbarLayout = view.findViewById(R.id.app_bar_user);
-        appbarLayout.addOnOffsetChangedListener(this);
-        mMaxScrollSize = appbarLayout.getTotalScrollRange();
         mProfileImage = view.findViewById(R.id.image_thumb_user);
         camera = view.findViewById(R.id.camera_user);
-        cover_user = view.findViewById(R.id.image_avt_user);
-
         //InputMethodManager imgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         //imgr.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
 
@@ -140,34 +134,6 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         Init();
         //On click
-
-        cover_user.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog builder = new Dialog(getActivity());
-                builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                builder.getWindow().setBackgroundDrawable(
-                        new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialogInterface) {
-                        //nothing;
-                    }
-                });
-                ImageView imageView = new ImageView(getActivity());
-                if (!Common.CurrentUser.getImage().equals("empty")) {
-                    Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(imageView);
-                }//set the image in dialog popup
-                //below code fullfil the requirement of xml layout file for dialoge popup
-                else {
-                    imageView.setImageResource(R.drawable.avt);
-                }
-                builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-                builder.show();
-            }
-        });
 
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
@@ -358,7 +324,6 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
 
     private void Init() {
         if (!Common.CurrentUser.getImage().equals("empty")) {
-            Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(cover_user);
             Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(mProfileImage);
         }
         email_user.setText(Common.CurrentUser.getEmail());
@@ -400,7 +365,6 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
                             String downloadUrl = uri.toString();
                             Common.CurrentUser.setImage(downloadUrl);
                             if (!Common.CurrentUser.getImage().equals("empty")) {
-                                Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(cover_user);
                                 Picasso.with(getActivity()).load(Common.CurrentUser.getImage()).into(mProfileImage);
                             }
                             user.child(Common.CurrentUser.getId()).child("image").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -424,37 +388,5 @@ public class InfoFragment extends Fragment implements AppBarLayout.OnOffsetChang
             });
         }
 
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
-        if (mMaxScrollSize == 0)
-            mMaxScrollSize = appBarLayout.getTotalScrollRange();
-
-        int percentage = (Math.abs(i)) * 100 / mMaxScrollSize;
-
-        if (percentage >= PERCENTAGE_TO_ANIMATE_AVATAR && mIsAvatarShown) {
-            mIsAvatarShown = false;
-
-            mProfileImage.animate()
-                    .scaleY(0).scaleX(0)
-                    .setDuration(300)
-                    .start();
-            camera.animate()
-                    .scaleY(0).scaleX(0)
-                    .setDuration(300)
-                    .start();
-        }
-
-        if (percentage <= PERCENTAGE_TO_ANIMATE_AVATAR && !mIsAvatarShown) {
-            mIsAvatarShown = true;
-
-            mProfileImage.animate()
-                    .scaleY(1).scaleX(1)
-                    .start();
-            camera.animate()
-                    .scaleY(1).scaleX(1)
-                    .start();
-        }
     }
 }

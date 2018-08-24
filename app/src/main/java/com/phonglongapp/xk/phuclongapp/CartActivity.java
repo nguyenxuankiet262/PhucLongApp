@@ -244,8 +244,6 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
                                         sendNotification(idOrder);
 
-
-
                                         loadCartItem();
                                     }
                                 }
@@ -274,7 +272,6 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                     @Override
                     public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                         if(response.body().success == 1){
-                            finish();
                         }
                         else {
                             Toast.makeText(CartActivity.this, "Lỗi bất ngờ", Toast.LENGTH_LONG).show();
@@ -346,6 +343,8 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
 
             cartAdapter.removeCart(deleteItemIndex);
 
+            cartAdapter.notifyDataSetChanged();
+
             Common.cartRepository.deleteCartItem(deleteItem);
 
             Snackbar snackbar = Snackbar.make(relativeLayout, new StringBuilder(name).append(" đã được xóa khỏi giỏ hàng").toString(),
@@ -355,12 +354,16 @@ public class CartActivity extends AppCompatActivity implements RecyclerItemTouch
                 public void onClick(View v) {
                     cartAdapter.restoreCart(deleteItem, deleteItemIndex);
                     Common.cartRepository.insertCart(deleteItem);
+                    cartAdapter.notifyDataSetChanged();
+                    existLayout.setVisibility(View.VISIBLE);
+                    emptyLayout.setVisibility(View.GONE);
                 }
             });
             snackbar.setActionTextColor(Color.YELLOW);
             snackbar.show();
             if (Common.cartRepository.countCartItem(Common.CurrentUser.getId()) == 0) {
                 total.setText("0 VNĐ");
+                emptyLayout.setVisibility(View.VISIBLE);
             }
         }
     }

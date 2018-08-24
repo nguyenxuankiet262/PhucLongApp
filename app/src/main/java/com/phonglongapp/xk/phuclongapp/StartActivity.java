@@ -39,12 +39,13 @@ import static android.os.SystemClock.sleep;
 public class StartActivity extends AppCompatActivity {
 
     private ImageView logoView;
-    private Animation anim_alpha,anim_blink;
+    private Animation anim_alpha;
     private FirebaseAuth auth;
     //FirebaseDatabase
     FirebaseDatabase database;
     DatabaseReference user;
     FirebaseUser currentUser;
+    private ValueEventListener valueEventListener;
     String uid;
     @Override
 
@@ -53,11 +54,6 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
         auth = FirebaseAuth.getInstance();
         logoView = (ImageView) findViewById(R.id.logo_Image);
-        anim_blink = new AlphaAnimation(0.0f,1.0f);
-        anim_blink.setDuration(20);
-        anim_blink.setStartOffset(20);
-        anim_blink.setRepeatMode(Animation.REVERSE);
-        anim_blink.setRepeatCount(Animation.INFINITE);
         anim_alpha = AnimationUtils.loadAnimation(this,R.anim.anim_alpha);
         anim_alpha.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -77,13 +73,14 @@ public class StartActivity extends AppCompatActivity {
                                     uid = currentUser.getUid();
 
                                     user = database.getReference("User").child(uid);
-                                    user.addValueEventListener(new ValueEventListener() {
+                                    valueEventListener = user.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             User user = dataSnapshot.getValue(User.class);
                                             user.setId(uid);
                                             Common.CurrentUser = user;
-                                            Intent intent = new Intent(StartActivity.this, MainActivity.class);;
+                                            Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                             startActivity(intent);
                                             finish();
                                         }
@@ -93,10 +90,12 @@ public class StartActivity extends AppCompatActivity {
 
                                         }
                                     });
+
                                     // User is signed in (getCurrentUser() will be null if not signed in
                                 }
                                 else {
                                     Intent intent = new Intent(StartActivity.this, LoginActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -113,5 +112,13 @@ public class StartActivity extends AppCompatActivity {
             }
         });
         logoView.startAnimation(anim_alpha);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(valueEventListener != null) {
+            user.removeEventListener(valueEventListener);
+        }
     }
 }

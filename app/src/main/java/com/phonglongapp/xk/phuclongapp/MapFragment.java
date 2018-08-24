@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,8 @@ import java.util.List;
  *
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback{
+
+    Toolbar toolbar;
 
     private static View view;
     FirebaseDatabase database;
@@ -67,7 +70,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Common.BackPress = 1;
+        Common.BackPressB = 1;
     }
 
     @Override
@@ -92,6 +95,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback{
         coordinatesList = new ArrayList<Coordinates>();
         database = FirebaseDatabase.getInstance();
         mapdatabase = database.getReference("Location");
+        toolbar = view.findViewById(R.id.tool_bar_map);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 

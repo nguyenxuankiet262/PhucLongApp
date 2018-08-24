@@ -25,5 +25,4 @@ public class Cart {
     public int cPriceItem;
     @ColumnInfo(name = "status")
     public String cStatus;
-
 }

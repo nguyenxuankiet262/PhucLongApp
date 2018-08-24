@@ -131,6 +131,9 @@ public class LoginMainActivity extends AppCompatActivity {
                     if (check == true) {
                         login_user(mail, pass);
                     }
+                    else {
+                        progressDialog.dismiss();
+                    }
                 }
                 else{
                     Handler handler = new Handler();

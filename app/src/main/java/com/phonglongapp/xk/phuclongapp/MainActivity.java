@@ -30,6 +30,8 @@ import com.phonglongapp.xk.phuclongapp.Model.Token;
 import com.phonglongapp.xk.phuclongapp.Utils.CustomViewPager;
 import com.phonglongapp.xk.phuclongapp.Adapter.ViewPagerAdapter;
 import com.phonglongapp.xk.phuclongapp.Utils.Common;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.stepstone.apprating.listener.RatingDialogListener;
 
 import java.text.DateFormat;
@@ -62,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
         locationFragment = new LocationFragment();
 
         viewPager = (CustomViewPager) findViewById(R.id.fragment_content);
+        viewPager.setOffscreenPageLimit(3);
         adapter = new ViewPagerAdapter (MainActivity.this.getSupportFragmentManager());
         adapter.addFragment(mainFragment);
         adapter.addFragment(favoriteFragment);
@@ -74,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
                 updateToken(newToken);
             }
         });
-
 
 
 //        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -117,13 +119,15 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
             public boolean onTabSelected(int position, boolean wasSelected) {
                 switch (position){
                     case 0:
-                        viewPager.setCurrentItem(0);
+                        viewPager.setCurrentItem(0,false);
+                        Common.checkPosision = 1;
                         return true;
                     case 1:
-                        viewPager.setCurrentItem(1);
+                        viewPager.setCurrentItem(1,false);
                         return true;
                     case 2:
-                        viewPager.setCurrentItem(2);
+                        viewPager.setCurrentItem(2,false);
+                        Common.checkPosision = 2;
                         return true;
                         default:
                             return false;
@@ -141,11 +145,17 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
 
     @Override
     public void onBackPressed() {
-        if (Common.BackPress > 0) {
+        if (Common.checkPosision == 1 && Common.BackPressA > 0) {
             super.onBackPressed();
-            Common.BackPress--;
+            Common.BackPressA--;
             Common.checkDrinkFragmentOpen = false;
-        } else {
+        }
+        else if(Common.checkPosision == 2 && Common.BackPressB >0) {
+            super.onBackPressed();
+            Common.BackPressB--;
+            Common.checkDrinkFragmentOpen = false;
+        }
+        else{
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Bạn có muốn thoát chương trình không?");
             builder.setCancelable(false);
@@ -160,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
                 public void onClick(DialogInterface dialogInterface, int i) {
                     FirebaseAuth.getInstance().signOut();
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();
                 }
@@ -168,6 +179,8 @@ public class MainActivity extends AppCompatActivity implements RatingDialogListe
             alertDialog.show();
         }
     }
+
+
     @Override
     public void onPositiveButtonClicked(int i, String s) {
         final ProgressDialog progressDialog;

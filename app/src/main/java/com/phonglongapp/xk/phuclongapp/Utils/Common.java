@@ -23,7 +23,9 @@ public class Common {
     public static DrinkRoomDatabase drinkroomDatabase;
     public static CartRepository cartRepository;
     public static FavoriteRepository favoriteRepository;
-    public static int BackPress;
+    public static int BackPressA;
+    public static int BackPressB;
+    public static int checkPosision = 1;
     public static View parentFavLayout;
     public static boolean checkDrinkFragmentOpen;
     public static String idDrink;

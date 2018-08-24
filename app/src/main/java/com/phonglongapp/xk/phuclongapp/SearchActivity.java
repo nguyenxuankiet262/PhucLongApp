@@ -66,23 +66,22 @@ public class SearchActivity extends AppCompatActivity implements RatingDialogLis
         loadDrinks();
 
         //Setting searchBar
-        searchBar.setMaxSuggestionCount(5);
-        searchBar.setLastSuggestions(suggest_list);
+
+
         searchBar.addTextChangeListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                List<String> suggest = new ArrayList<String>();
+                List<String> suggest = new ArrayList<>();
                 for(String search:suggest_list){
                     if(search.toLowerCase().contains(searchBar.getText().toLowerCase())){
                         suggest.add(search);
+                        startSearch(s);
                     }
                 }
-                searchBar.setLastSuggestions(suggest);
             }
 
             @Override

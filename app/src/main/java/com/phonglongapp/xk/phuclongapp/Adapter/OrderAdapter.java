@@ -37,7 +37,11 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final OrderViewHolder holder, int position) {
+        holder.recyclerView.setVisibility(View.GONE);
+        if(!orderList.get(position).getNote().isEmpty()){
+            holder.comment_order.setText(orderList.get(position).getNote());
+        }
         if(orderList.get(position).getStatus().equals("0")) {
             holder.status_order.setText("Đã nhận order");
             holder.status_order.setTextColor(ContextCompat.getColor(context,R.color.colorOpenStore));
@@ -60,6 +64,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
         holder.recyclerView.setHasFixedSize(true);
         adapter = new HistoryAdapter(context,orderList.get(position).getCartList());
         holder.recyclerView.setAdapter(adapter);
+        holder.dropdown_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(holder.check_dropdown == 0) {
+                    holder.dropdown_button.setImageResource(R.drawable.ic_arrow_drop_up_black_50dp);
+                    holder.recyclerView.setVisibility(View.VISIBLE);
+                    holder.check_dropdown = 1;
+                }
+                else{
+                    holder.dropdown_button.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
+                    holder.recyclerView.setVisibility(View.GONE);
+                    holder.check_dropdown = 0;
+                }
+            }
+        });
     }
 
 

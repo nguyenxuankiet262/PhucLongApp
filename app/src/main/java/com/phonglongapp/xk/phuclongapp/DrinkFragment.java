@@ -67,7 +67,7 @@ public class DrinkFragment extends Fragment{
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Common.BackPress = 1;
+        Common.BackPressA = 1;
         Common.checkDrinkFragmentOpen = true;
         setHasOptionsMenu(true);
     }

@@ -345,7 +345,7 @@ public class MainFragment extends Fragment {
                 popup.dismiss();
                 InfoFragment infoFragment = new InfoFragment();
                 FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.main_fragment, infoFragment , "InfoFragment").addToBackStack(null).commit();
+                transaction.replace(R.id.main_fragment, infoFragment).addToBackStack(null).commit();
             }
         });
 
@@ -367,6 +367,7 @@ public class MainFragment extends Fragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         FirebaseAuth.getInstance().signOut();
                         Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                     }
                 });
@@ -387,7 +388,7 @@ public class MainFragment extends Fragment {
                     popup.dismiss();
                     ViewDrinkFragment viewDrinkFragment = new ViewDrinkFragment();
                     FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                    transaction.replace(R.id.main_fragment, viewDrinkFragment, "InfoFragment").addToBackStack(null).commit();
+                    transaction.replace(R.id.main_fragment, viewDrinkFragment).addToBackStack(null).commit();
                 }
             }
         });
