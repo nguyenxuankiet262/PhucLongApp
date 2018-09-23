@@ -30,6 +30,7 @@ public class Common {
     public static boolean checkDrinkFragmentOpen;
     public static String idDrink;
 
+
     public static boolean isConnectedToInternet(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -55,9 +56,14 @@ public class Common {
     public static User CurrentUser;
 
     private static final String BASE_URL = "https://fcm.googleapis.com/";
+    private static final String BASE_URL_2 = "http://10.0.2.2/phuclong/";
 
     public static APIService getFCMService(){
         return RetrofitClient.getClient(BASE_URL).create(APIService.class);
+    }
+
+    public static APIService getAPI(){
+        return RetrofitClient.getClient(BASE_URL_2).create(APIService.class);
     }
 
     private static final int SECOND_MILLIS = 1000;

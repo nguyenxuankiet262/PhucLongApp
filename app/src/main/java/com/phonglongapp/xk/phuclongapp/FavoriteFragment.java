@@ -26,6 +26,7 @@ import com.phonglongapp.xk.phuclongapp.Database.ModelDB.Favorite;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -39,6 +40,7 @@ public class FavoriteFragment extends Fragment {
     FrameLayout favLayout;
     RelativeLayout emptyLayout;
     CoordinatorLayout existLayout;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public FavoriteFragment() {
 
@@ -65,7 +67,7 @@ public class FavoriteFragment extends Fragment {
     }
 
     private void loadFavItem() {
-        Common.favoriteRepository.getFavItemsByUserID(Common.CurrentUser.getId())
+        compositeDisposable.add(Common.favoriteRepository.getFavItemsByUserID(Common.CurrentUser.getId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<List<Favorite>>() {
@@ -80,13 +82,18 @@ public class FavoriteFragment extends Fragment {
                         }
                         displayFav(favorites);
                     }
-                });
+                })
+        );
 
     }
 
     private void displayFav(List<Favorite> favorites) {
         FavoriteAdapter adapter = new FavoriteAdapter(getActivity(), favorites, this);
         list_fav.setAdapter(adapter);
-
+    }
+    @Override
+    public void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 }
